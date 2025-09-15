@@ -19,3 +19,11 @@ async def create_user(user_in:Create_User,session:AsyncSession=Depends(db_helper
 async def delete_user(user:UserBase= Depends(user_by_id),session:AsyncSession=Depends(db_helper.session_dependency)):
     await crud.delete_user(session=session,user=user)
 
+@router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
+async def delete_users_all(session:AsyncSession=Depends(db_helper.session_dependency)):
+    await crud.delete_users_all(session=session)
+
+
+@router.get("/{user_id}/",response_model=User)
+async def get_user(user:UserBase= Depends(user_by_id)):
+    return user

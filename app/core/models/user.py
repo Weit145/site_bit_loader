@@ -9,4 +9,4 @@ class User(Base):
 
     __tablename__="User"
 
-    usernmae:Mapped[str]=mapped_column(String(32),unique=True)
+    usernmae:Mapped[str]=mapped_column(String(32),unique=False)

@@ -21,3 +21,11 @@ async def delete_user(session:AsyncSession, user:UserBase):
 
 async def get_user(session:AsyncSession, user_id):
     return await session.get(User, user_id)
+
+async def delete_users_all(session:AsyncSession):
+    stat=select(User).order_by(User.id)
+    result:Result=await session.execute(stat)
+    users=result.scalars().all()
+    for user in users:
+        await session.delete(user)
+    await session.commit()
