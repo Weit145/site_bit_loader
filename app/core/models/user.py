@@ -15,6 +15,8 @@ class User(Base):
     __tablename__="User"
 
     username:Mapped[str]=mapped_column(String(32),unique=False)
-    surname:Mapped[str]=mapped_column(String(32),unique=False)
+
+
+    password:Mapped[str]=mapped_column(String(32),unique=False)
 
     posts:Mapped[list["Post"]]=relationship(back_populates="user")
