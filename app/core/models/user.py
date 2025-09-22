@@ -17,6 +17,6 @@ class User(Base):
     username:Mapped[str]=mapped_column(String(32),unique=False)
 
 
-    password:Mapped[str]=mapped_column(String(32),unique=False)
+    password:Mapped[str]=mapped_column(String,unique=False)
 
     posts:Mapped[list["Post"]]=relationship(back_populates="user")

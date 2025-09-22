@@ -4,9 +4,16 @@ from pydantic import BaseModel, ConfigDict
 from typing import Annotated
 
 class UserBase(BaseModel):
-    usernmae:Annotated[str,MinLen(4),MaxLen(32)]
+    username:Annotated[str,MinLen(4),MaxLen(32)]
+    disabled: bool | None = None
     pass
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: str | None = None
 class Create_User(UserBase):
     password:Annotated[str,MaxLen(6),MaxLen(32)]
     pass
