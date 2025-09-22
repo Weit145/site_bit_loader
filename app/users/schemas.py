@@ -16,7 +16,7 @@ class TokenData(BaseModel):
     username: str | None = None
 
 class Create_User(UserBase):
-    password: Annotated[str, MinLen(6), MaxLen(32)]  # Исправлено имя поля
+    password: Annotated[str, MinLen(6), MaxLen(32)]
 
 class Enter_User(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]

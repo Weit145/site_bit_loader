@@ -16,9 +16,11 @@ sqlalchemy = "^2.0.43"
 aiosqlite = "^0.21.0"
 pydantic-settings = "^2.10.1"
 pyjwt = "^2.10.1"
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+passlib = {extras = ["argon2", "bcrypt"], version = "^1.7.4"}
 python-dotenv = "^1.1.1"
 python-multipart = "^0.0.20"
+argon2-cffi = "^25.1.0"
+bcrypt = "^4.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.2"

@@ -8,7 +8,9 @@ import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
+
 from passlib.context import CryptContext
+    
 
 from core.models import User
 from .schemas import AvtorUser, Create_User, TokenData
@@ -16,8 +18,8 @@ from .schemas import AvtorUser, Create_User, TokenData
 SECRET_KEY = "5a489ff4a2cb133115c02d4ad6d2e2eb0324d11e5527332e8afba53426a6f335"
 ALGORITHM = "HS256"
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token/")  # Исправлен URL
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token/")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -26,7 +28,9 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 async def get_user(session: AsyncSession, username: str):
-    return await session.get(User, username)
+    stmt = select(User).where(User.username == username)
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
 
 async def authenticate_user(session: AsyncSession, username: str, password: str):
     user = await get_user(session, username)
@@ -77,7 +81,6 @@ async def get_current_active_user(
     return current_user
 
 async def create_user(session: AsyncSession, user_create: Create_User):
-    # Используем правильный метод для проверки существования пользователя
     stmt = select(User).where(User.username == user_create.username)
     result = await session.execute(stmt)
     existing_user = result.scalar_one_or_none()
@@ -88,7 +91,6 @@ async def create_user(session: AsyncSession, user_create: Create_User):
             detail="Username already registered"
         )
     
-    # Остальной код остается без изменений
     hashed_password = get_password_hash(user_create.password)
     user_data = user_create.model_dump()
     user_data["password"] = hashed_password
