@@ -31,8 +31,10 @@ class DatabaseHellper:
     async def session_dependency(self):
         # Генератор сессий для зависимостей FastAPI
         session = self.get_scoped_session()
-        yield session
-        await session.close()
+        try:
+            yield session
+        finally:    
+            await session.close()
 
 # Создаем глобальный экземпляр помощника БД с настройками из конфига
 db_helper= DatabaseHellper(
