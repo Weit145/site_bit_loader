@@ -3,18 +3,20 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 import uvicorn
 
+from passlib.context import CryptContext
+
 from users.views import router as users_router
 
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 app=FastAPI()
-app.include_router(users_router,tags=["Users"])
+app.include_router(users_router, prefix="/users", tags=["Users"]) 
 
 
 if __name__=="__main__":
