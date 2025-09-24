@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper
 from . import crud
-from .schemas import User
+from app.core.models import User
 async def user_by_id(
     user_id: Annotated[int, Path],
     session: AsyncSession = Depends(db_helper.session_dependency)
@@ -14,7 +14,6 @@ async def user_by_id(
     user = await session.get(User, user_id)
     if user is not None:
         return user
-    
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"User {user_id} not found"
