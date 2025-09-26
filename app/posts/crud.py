@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import CreatePost, UpdatePost
+from .schemas import CreatePost, UpdatePost, BaseModel
 from core.models import Post
 
 async def create_post(session:AsyncSession, post_create:CreatePost):
