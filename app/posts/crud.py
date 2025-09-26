@@ -1,9 +1,9 @@
 from fastapi import Depends, HTTPException, status
 
-from sqlalchemy import Result, select
+from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import CreatePost
+from .schemas import CreatePost, UpdatePost
 from core.models import Post
 
 async def create_post(session:AsyncSession, post_create:CreatePost):
@@ -44,3 +44,20 @@ async def get_by_id(session:AsyncSession, post_id:int):
             detail="Post not found"
         )
     return post
+
+async def update_post(session:AsyncSession, post:UpdatePost,post_id:int):
+    posts = await session.get(Post, post_id)
+    if not posts:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+    stmt = (
+        update(Post)
+        .where(Post.id == post_id)
+        .values(**post.model_dump(exclude={'post_id'}))
+        )
+    await session.execute(stmt)
+    await session.commit()
+    await session.refresh(posts)
+    return posts

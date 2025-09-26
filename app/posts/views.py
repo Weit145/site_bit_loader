@@ -7,7 +7,7 @@ from typing import Annotated
 
 from core.models.db_hellper import db_helper  
 from core.models.post import Post
-from .schemas import CreatePost,PostBase
+from .schemas import CreatePost,PostBase,UpdatePost
 from . import crud
 # from .dependens import post_by_id
 
@@ -41,3 +41,11 @@ async def get_by_id(
     session: AsyncSession = Depends(db_helper.session_dependency)
 ):
     return await crud.get_by_id(session=session,post_id=post_id)
+
+@router.put("/{post_id}/",response_model=PostBase)
+async def put_post(
+    post_id:int,
+    post:UpdatePost,
+    session: AsyncSession = Depends(db_helper.session_dependency)
+)->Post:
+    return await crud.update_post(session=session,post=post,post_id=post_id)
