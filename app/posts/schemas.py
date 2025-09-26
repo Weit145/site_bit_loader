@@ -11,6 +11,9 @@ class PostBase(BaseModel):
 class CreatePost(PostBase):
     pass
 
+class UpdatePost(PostBase):
+    pass
+
 class User(PostBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
