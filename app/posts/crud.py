@@ -21,9 +21,9 @@ async def delete_all(session:AsyncSession):
         await session.delete(post)
     await session.commit()
 
-async def delete_by_id(session:AsyncSession, post_id:int):
+async def delete_by_id(session:AsyncSession, post_id:int, user_id:int):
     post = await session.get(Post, post_id)
-    if not post:
+    if not post or post.user_id!=user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found"
