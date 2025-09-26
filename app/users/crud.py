@@ -11,14 +11,13 @@ from jwt.exceptions import InvalidTokenError
 
 from passlib.context import CryptContext
     
-
+from app.core.models.db_hellper import db_helper
 from core.models import User
 from .schemas import AvtorUser, Create_User, TokenData
 
 SECRET_KEY = "5a489ff4a2cb133115c02d4ad6d2e2eb0324d11e5527332e8afba53426a6f335"
 ALGORITHM = "HS256"
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token/")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
@@ -52,7 +51,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    session: AsyncSession
+    session: AsyncSession = Depends(db_helper.session_dependency)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -60,15 +59,12 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get("sub")
+        username = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]).get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
     except InvalidTokenError:
         raise credentials_exception
-    
-    stmt = select(User).where(User.username == token_data.username)
+    stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
     user= result.scalar_one_or_none()
     if user is None:

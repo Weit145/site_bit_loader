@@ -6,9 +6,10 @@ from pydantic import BaseModel, ConfigDict
 class PostBase(BaseModel):
     title:str
     body:str
-    user_id:int
+
 
 class CreatePost(PostBase):
+    user_id:int
     pass
 
 class UpdatePost(PostBase):

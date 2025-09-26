@@ -7,18 +7,23 @@ from typing import Annotated
 
 from core.models.db_hellper import db_helper  
 from core.models.post import Post
+
 from .schemas import CreatePost,PostBase,UpdatePost
 from . import crud
+from app.users.schemas import User
+from users.crud import get_current_user
 # from .dependens import post_by_id
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 @router.post("/",response_model=CreatePost)
 async def create_post(
-    post:CreatePost,
+    post:PostBase,
+    current_user: Annotated[User, Depends(get_current_user)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.create_post(post_create=post,session=session)
+    cr_post = CreatePost(title=post.title,body=post.body,user_id=current_user.id)
+    return await crud.create_post(post_create=cr_post,session=session)
 
 @router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_all(session: AsyncSession = Depends(db_helper.session_dependency)):
@@ -37,15 +42,17 @@ async def get_all(session: AsyncSession = Depends(db_helper.session_dependency))
 
 @router.get("/{post_id}/",response_model=PostBase)
 async def get_by_id(
-    post_id:int,
+    current_user: Annotated[User, Depends(get_current_user)],
     session: AsyncSession = Depends(db_helper.session_dependency)
 ):
+    post_id=current_user.id
     return await crud.get_by_id(session=session,post_id=post_id)
 
 @router.put("/{post_id}/",response_model=PostBase)
 async def put_post(
-    post_id:int,
+    current_user: Annotated[User, Depends(get_current_user)],
     post:UpdatePost,
     session: AsyncSession = Depends(db_helper.session_dependency)
 )->Post:
+    post_id=current_user.id
     return await crud.update_post(session=session,post=post,post_id=post_id)
