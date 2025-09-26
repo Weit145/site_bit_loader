@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials,HTTPBearer
 from datetime import timedelta
 from typing import Annotated
 
@@ -10,14 +10,16 @@ from .dependens import user_by_id
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+security = HTTPBearer()
 router = APIRouter(prefix="/users", tags=["Users"])
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 @router.post("/", response_model=Token)
 async def create_user(
-    user_in: Create_User,
+    user: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: AsyncSession = Depends(db_helper.session_dependency)
 )-> Token:
+    user_in = Create_User(username=user.username,password=user.password)
     user = await crud.create_user(session=session, user_create=user_in)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = crud.create_access_token(
@@ -61,8 +63,10 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
-# @router.get("/me/", response_model=User)  
-# async def read_users_me(
-#     current_user: User= Depends(crud.get_current_active_user),
-# ):
-#     return current_user
+@router.get("/me/", response_model=User)  
+async def read_users_me(
+    credentials: Annotated[HTTPAuthorizationCredentials,Depends(security)],
+    session: AsyncSession = Depends(db_helper.session_dependency),
+):
+    token = credentials.credentials
+    return await crud.get_current_user(token,session)
