@@ -51,9 +51,9 @@ async def get_by_id(
 
 @router.put("/{post_id}/",response_model=PostBase)
 async def put_post(
+    post_id: int,
     current_user: Annotated[User, Depends(get_current_user)],
     post:UpdatePost,
     session: AsyncSession = Depends(db_helper.session_dependency)
 )->Post:
-    post_id=current_user.id
     return await crud.update_post(session=session,post=post,post_id=post_id)
