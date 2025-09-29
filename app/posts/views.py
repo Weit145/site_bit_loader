@@ -56,4 +56,4 @@ async def put_post(
     post:UpdatePost,
     session: AsyncSession = Depends(db_helper.session_dependency)
 )->Post:
-    return await crud.update_post(session=session,post=post,post_id=post_id)
+    return await crud.update_post(session=session,post=post,post_id=post_id,user_id=current_user.id)

@@ -45,9 +45,9 @@ async def get_by_id(session:AsyncSession, post_id:int):
         )
     return post
 
-async def update_post(session:AsyncSession, post:UpdatePost,post_id:int):
+async def update_post(session:AsyncSession, post:UpdatePost,post_id:int,user_id:int):
     posts = await session.get(Post, post_id)
-    if not posts:
+    if not posts or posts.user_id!=user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found"
