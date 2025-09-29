@@ -31,6 +31,14 @@ async def delete_by_id(session:AsyncSession, post_id:int, user_id:int):
     await session.delete(post)
     await session.commit()
 
+async def delete_by_user_id(session:AsyncSession, user_id:int):
+    stm = select(Post).where(Post.user_id==user_id)
+    result :Result  =await session.execute(stm)
+    posts = result.scalars().all()
+    for post in posts:
+        await session.delete(post)
+    await session.commit()
+
 async def get_all(session:AsyncSession):
     stm = select(Post).order_by(Post.id)
     result :Result  =await session.execute(stm)

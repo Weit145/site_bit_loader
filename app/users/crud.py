@@ -100,6 +100,8 @@ async def create_user(session: AsyncSession, user_create: Create_User):
     return user
 
 async def delete_user(session: AsyncSession, user_id: int):
+    from app.posts.crud import delete_by_user_id
+    await delete_by_user_id(session=session,user_id=user_id)
     user = await session.get(User, user_id)
     if not user:
         raise HTTPException(
@@ -110,6 +112,8 @@ async def delete_user(session: AsyncSession, user_id: int):
     await session.commit()
 
 async def delete_users_all(session: AsyncSession):
+    from app.posts.crud import delete_all
+    await delete_all(session)
     stmt = select(User).order_by(User.id)
     result: Result = await session.execute(stmt)
     users = result.scalars().all()

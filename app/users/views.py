@@ -29,11 +29,16 @@ async def create_user(
 
 @router.delete("/{user_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
+    current_user: Annotated[User, Depends(crud.get_current_user)],
     user: User = Depends(user_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency)
 ):
-    await session.delete(user)
-    await session.commit()
+    if user.id!=current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Not you ID"
+        )
+    await crud.delete_user(session=session,user_id=user.id)
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_users_all(
