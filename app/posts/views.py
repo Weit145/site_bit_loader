@@ -28,7 +28,7 @@ async def create_post(
 @router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_all(session: AsyncSession = Depends(db_helper.session_dependency)):
     return await crud.delete_all(session=session)
-
+    
 @router.delete("/{post_id}/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(
     post_id:int,
@@ -44,9 +44,9 @@ async def get_all(session: AsyncSession = Depends(db_helper.session_dependency))
 @router.get("/{post_id}/",response_model=PostBase)
 async def get_by_id(
     current_user: Annotated[User, Depends(get_current_user)],
+    post_id:int,
     session: AsyncSession = Depends(db_helper.session_dependency)
 ):
-    post_id=current_user.id
     return await crud.get_by_id(session=session,post_id=post_id)
 
 @router.put("/{post_id}/",response_model=PostBase)
