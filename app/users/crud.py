@@ -33,10 +33,12 @@ async def get_user(session: AsyncSession, username: str):
 
 async def authenticate_user(session: AsyncSession, username: str, password: str):
     user = await get_user(session, username)
-    if not user:
-        return False
-    if not verify_password(password, user.password):
-        return False
+    if (not user) or (not verify_password(password, user.password)):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):

@@ -23,11 +23,6 @@ async def delete_all(session:AsyncSession):
 
 async def delete_by_id(session:AsyncSession, post_id:int, user_id:int):
     post = await session.get(Post, post_id)
-    if not post or post.user_id!=user_id:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Post not found"
-        )
     await session.delete(post)
     await session.commit()
 
@@ -44,17 +39,7 @@ async def get_all(session:AsyncSession):
     result :Result  =await session.execute(stm)
     return result.scalars().all()
 
-async def get_by_id(session:AsyncSession, post_id:int):
-    post = await session.get(Post, post_id)
-    if not post:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Post not found"
-        )
-    return post
-
-async def update_post(session:AsyncSession, post:UpdatePost,post_id:int,user_id:int):
-    posts = await session.get(Post, post_id)
+async def update_post(session:AsyncSession, post:UpdatePost,posts:int,user_id:int):
     if not posts or posts.user_id!=user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,7 +47,7 @@ async def update_post(session:AsyncSession, post:UpdatePost,post_id:int,user_id:
         )
     stmt = (
         update(Post)
-        .where(Post.id == post_id)
+        .where(Post.id == posts)
         .values(**post.model_dump(exclude={'post_id'}))
         )
     await session.execute(stmt)
