@@ -12,7 +12,7 @@ from .schemas import CreatePost,PostBase,UpdatePost
 from . import crud
 from app.users.schemas import User
 from users.crud import get_current_user
-# from .dependens import post_by_id
+from .dependens import post_by_id
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
@@ -31,11 +31,11 @@ async def delete_all(session: AsyncSession = Depends(db_helper.session_dependenc
     
 @router.delete("/{post_id}/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(
-    post_id:int,
     current_user: Annotated[User, Depends(get_current_user)],
+    post:int = Depends(post_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency),
 ):
-    return await crud.delete_by_id(session=session,post_id=post_id,user_id=current_user.id)
+    return await crud.delete_by_id(session=session,post_id=post.id,user_id=current_user.id)
 
 @router.get("/",status_code=status.HTTP_200_OK)
 async def get_all(session: AsyncSession = Depends(db_helper.session_dependency)):
@@ -43,17 +43,15 @@ async def get_all(session: AsyncSession = Depends(db_helper.session_dependency))
 
 @router.get("/{post_id}/",response_model=PostBase)
 async def get_by_id(
-    current_user: Annotated[User, Depends(get_current_user)],
-    post_id:int,
-    session: AsyncSession = Depends(db_helper.session_dependency)
+    post:int = Depends(post_by_id),
 ):
-    return await crud.get_by_id(session=session,post_id=post_id)
+    return post
 
 @router.put("/{post_id}/",response_model=PostBase)
 async def put_post(
-    post_id: int,
     current_user: Annotated[User, Depends(get_current_user)],
     post:UpdatePost,
+    posts:int = Depends(post_by_id),
     session: AsyncSession = Depends(db_helper.session_dependency)
 )->Post:
-    return await crud.update_post(session=session,post=post,post_id=post_id,user_id=current_user.id)
+    return await crud.update_post(session=session,post=post,posts=posts,user_id=current_user.id)
