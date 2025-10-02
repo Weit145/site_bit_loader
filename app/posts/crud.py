@@ -39,15 +39,15 @@ async def get_all(session:AsyncSession):
     result :Result  =await session.execute(stm)
     return result.scalars().all()
 
-async def update_post(session:AsyncSession, post:UpdatePost,posts:int,user_id:int):
-    if not posts or posts.user_id!=user_id:
+async def update_post(session:AsyncSession, post:UpdatePost,posts:Post,user_id:int):
+    if (not posts) or (posts.user_id!=user_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found"
         )
     stmt = (
         update(Post)
-        .where(Post.id == posts)
+        .where(Post.id == posts.id)
         .values(**post.model_dump(exclude={'post_id'}))
         )
     await session.execute(stmt)
