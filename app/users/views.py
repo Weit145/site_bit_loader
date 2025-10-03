@@ -17,7 +17,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 @router.post("/", response_model=Token)
 async def create_user(
     user: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: AsyncSession = Depends(db_helper.session_dependency)
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )-> Token:
     user_in = Create_User(username=user.username,password=user.password)
     user = await crud.create_user(session=session, user_create=user_in)
@@ -30,8 +30,8 @@ async def create_user(
 @router.delete("/{user_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
     current_user: Annotated[User, Depends(crud.get_current_user)],
-    user: User = Depends(user_by_id),
-    session: AsyncSession = Depends(db_helper.session_dependency)
+    user: Annotated[User, Depends(user_by_id)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 ):
     if user.id!=current_user.id:
         raise HTTPException(
@@ -42,7 +42,7 @@ async def delete_user(
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_users_all(
-    session: AsyncSession = Depends(db_helper.session_dependency)
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 ):
     await crud.delete_users_all(session=session)
 
@@ -50,7 +50,7 @@ async def delete_users_all(
 @router.post("/token/", response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: AsyncSession = Depends(db_helper.session_dependency),
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 ) -> Token:
     user = await crud.authenticate_user(session, form_data.username, form_data.password)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -67,5 +67,7 @@ async def read_users_me(
 
 
 @router.get("/{user_id}/", response_model=User)
-async def get_user(user: User = Depends(user_by_id))->User:
+async def get_user(
+    user:Annotated[ User, Depends(user_by_id)]
+)->User:
     return user
