@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Query
 
 from pytest import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from typing import Annotated
+from typing import Annotated,List
 
 from core.models.db_hellper import db_helper  
 from core.models.post import Post
@@ -18,40 +18,44 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 
 @router.post("/",response_model=CreatePost)
 async def create_post(
-    post:PostBase,
+    post:Annotated[PostBase,Query(mix_length=3)],
     current_user: Annotated[User, Depends(get_current_user)],
-    session: AsyncSession = Depends(db_helper.session_dependency),
-):
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->CreatePost:
     cr_post = CreatePost(title=post.title,body=post.body,user_id=current_user.id)
     return await crud.create_post(post_create=cr_post,session=session)
 
 @router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
-async def delete_all(session: AsyncSession = Depends(db_helper.session_dependency)):
+async def delete_all(
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->None:
     return await crud.delete_all(session=session)
     
 @router.delete("/{post_id}/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(
     current_user: Annotated[User, Depends(get_current_user)],
-    post:Post = Depends(post_by_id),
-    session: AsyncSession = Depends(db_helper.session_dependency),
-):
-    return await crud.delete_by_id(session=session,post_id=post.id,user_id=current_user.id)
+    post:Annotated[CreatePost, Depends(post_by_id)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->None:
+    return await crud.delete_by_id(session=session,post=post,user_id=current_user.id)
 
 @router.get("/",status_code=status.HTTP_200_OK)
-async def get_all(session: AsyncSession = Depends(db_helper.session_dependency)):
+async def get_all(
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->List[PostBase]:
     return await crud.get_all(session=session)
 
 @router.get("/{post_id}/",response_model=PostBase)
 async def get_by_id(
-    post:int = Depends(post_by_id),
-):
+    post:Annotated[CreatePost, Depends(post_by_id)],
+)->PostBase:
     return post
 
 @router.put("/{post_id}/",response_model=PostBase)
 async def put_post(
     current_user: Annotated[User, Depends(get_current_user)],
-    post:UpdatePost,
-    posts:Post = Depends(post_by_id),
-    session: AsyncSession = Depends(db_helper.session_dependency)
-)->Post:
+    post:Annotated[UpdatePost,Query(mix_length=3)],
+    posts:Annotated[Post, Depends(post_by_id)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->PostBase:
     return await crud.update_post(session=session,post=post,posts=posts,user_id=current_user.id)
