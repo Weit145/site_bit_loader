@@ -4,7 +4,7 @@ from datetime import timedelta
 from typing import Annotated
 
 from core.models.db_hellper import db_helper  
-from .schemas import Create_User, User, Token, AvtorUser
+from .schemas import Create_User, Token, AvtorUser, UserBase, UserResponse
 from . import crud
 from .dependens import user_by_id  
 
@@ -27,12 +27,20 @@ async def create_user(
     )
     return Token(access_token=access_token, token_type="bearer")
 
+
+@router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(
+    current_user: Annotated[UserResponse, Depends(crud.get_current_user)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->None:
+    await crud.delete_user(session=session,user_id=current_user.id)
+
 @router.delete("/{user_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(
-    current_user: Annotated[User, Depends(crud.get_current_user)],
-    user: Annotated[User, Depends(user_by_id)],
+    current_user: Annotated[UserResponse, Depends(crud.get_current_user)],
+    user: Annotated[UserResponse, Depends(user_by_id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
-):
+)->None:
     if user.id!=current_user.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -43,7 +51,7 @@ async def delete_user(
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_users_all(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
-):
+)->None:
     await crud.delete_users_all(session=session)
 
 
@@ -52,22 +60,22 @@ async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 ) -> Token:
-    user = await crud.authenticate_user(session, form_data.username, form_data.password)
+    user = await crud.authenticate_user(session=session, username=form_data.username, password=form_data.password)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = crud.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
 
-@router.get("/me/", response_model=User)  
+@router.get("/me/", response_model=UserResponse)  
 async def read_users_me(
-    current_user: Annotated[User, Depends(crud.get_current_user)],
-):
+    current_user: Annotated[UserResponse, Depends(crud.get_current_user)],
+)->UserResponse:
     return current_user
 
 
-@router.get("/{user_id}/", response_model=User)
+@router.get("/{user_id}/", response_model=UserResponse)
 async def get_user(
-    user:Annotated[ User, Depends(user_by_id)]
-)->User:
+    user:Annotated[ UserBase, Depends(user_by_id)]
+)->UserBase:
     return user

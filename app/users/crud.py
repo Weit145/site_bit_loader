@@ -13,7 +13,7 @@ from passlib.context import CryptContext
     
 from app.core.models.db_hellper import db_helper
 from core.models import User
-from .schemas import AvtorUser, Create_User, TokenData
+from .schemas import AvtorUser, Create_User, TokenData, UserBase, UserResponse
 
 SECRET_KEY = "5a489ff4a2cb133115c02d4ad6d2e2eb0324d11e5527332e8afba53426a6f335"
 ALGORITHM = "HS256"
@@ -26,22 +26,32 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return pwd_context.hash(password)
 
-async def get_user(session: AsyncSession, username: str):
+async def get_user(
+    session: AsyncSession,
+    username: str
+)->User:
     stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
 
-async def authenticate_user(session: AsyncSession, username: str, password: str):
-    user = await get_user(session, username)
-    if (not user) or (not verify_password(password, user.password)):
+async def authenticate_user(
+    session: AsyncSession,
+    username: str,
+    password: str
+)->UserResponse:
+    user_db = await get_user(session, username)
+    if (not user_db) or (not verify_password(password, user_db.password)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return user
+    return UserResponse.model_validate(user_db)
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(
+    data: dict, 
+    expires_delta: timedelta | None = None
+):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -54,7 +64,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(db_helper.session_dependency)
-):
+)->UserResponse:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -68,19 +78,22 @@ async def get_current_user(
         raise credentials_exception
     stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
-    user= result.scalar_one_or_none()
-    if user is None:
+    user_db= result.scalar_one_or_none()
+    if user_db is None:
         raise credentials_exception
-    return user
+    return UserResponse.model_validate(user_db)
 
 async def get_current_active_user(
     current_user: Annotated[AvtorUser, Depends(get_current_user)],
-):
+)->AvtorUser:
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-async def create_user(session: AsyncSession, user_create: Create_User):
+async def create_user(
+    session: AsyncSession, 
+    user_create: Create_User
+)->UserResponse:
     stmt = select(User).where(User.username == user_create.username)
     result = await session.execute(stmt)
     existing_user = result.scalar_one_or_none()
@@ -95,13 +108,16 @@ async def create_user(session: AsyncSession, user_create: Create_User):
     user_data = user_create.model_dump()
     user_data["password"] = hashed_password
     
-    user = User(**user_data)
-    session.add(user)
+    user_db = User(**user_data)
+    session.add(user_db)
     await session.commit()
-    await session.refresh(user)
-    return user
+    await session.refresh(user_db)
+    return UserResponse.model_validate(user_db)
 
-async def delete_user(session: AsyncSession, user_id: int):
+async def delete_user(
+    session: AsyncSession,
+    user_id: int
+)->None:
     from app.posts.crud import delete_by_user_id
     await delete_by_user_id(session=session,user_id=user_id)
     user = await session.get(User, user_id)
@@ -113,7 +129,7 @@ async def delete_user(session: AsyncSession, user_id: int):
     await session.delete(user)
     await session.commit()
 
-async def delete_users_all(session: AsyncSession):
+async def delete_users_all(session: AsyncSession)->None:
     from app.posts.crud import delete_all
     await delete_all(session)
     stmt = select(User).order_by(User.id)

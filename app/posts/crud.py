@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from typing import List
 
-from .schemas import CreatePost, UpdatePost, BaseModel, PostBase
+from .schemas import CreatePost, UpdatePost, PostBase, СorrectPost,PostResponse
 from core.models import Post
 
 async def create_post(session:AsyncSession, post_create:CreatePost)->CreatePost:
@@ -23,7 +23,7 @@ async def delete_all(session:AsyncSession)->None:
         await session.delete(post)
     await session.commit()
 
-async def delete_by_id(session:AsyncSession, post:Post, user_id:int)->None:
+async def delete_by_id(session:AsyncSession, post:СorrectPost, user_id:int)->None:
     if post.user_id!=user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -45,7 +45,7 @@ async def get_all(session:AsyncSession)->List[PostBase]:
     result :Result  =await session.execute(stm)
     return result.scalars().all()
 
-async def update_post(session:AsyncSession, post:UpdatePost,posts:Post,user_id:int):
+async def update_post(session:AsyncSession, post:UpdatePost,posts:СorrectPost,user_id:int)->Post:
     if (not posts) or (posts.user_id!=user_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
