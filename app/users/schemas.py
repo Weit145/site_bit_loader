@@ -18,10 +18,10 @@ class TokenData(BaseModel):
 class Create_User(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
 
+
 class Enter_User(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
-    pod_password: Annotated[str, MinLen(6), MaxLen(32)]
 
-class User(UserBase):
+class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
     id: int

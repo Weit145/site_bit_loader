@@ -28,7 +28,7 @@ async def post_by_id(
 async def true_token(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: AsyncSession = Depends(db_helper.session_dependency)
-):
+)-> bool:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -46,3 +46,8 @@ async def true_token(
     if user is None:
         raise credentials_exception
     return True
+
+# async def correct_post(
+    
+#     session: AsyncSession = Depends(db_helper.session_dependency)
+# ):

@@ -12,9 +12,13 @@ class CreatePost(PostBase):
     user_id:int
     pass
 
+class СorrectPost(PostBase):
+    user_id:int
+    pass
+
 class UpdatePost(PostBase):
     pass
 
-class User(PostBase):
+class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
