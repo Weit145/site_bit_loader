@@ -12,14 +12,11 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-class TokenData(BaseModel):
-    username: str | None = None
-
-class Create_User(UserBase):
+class UserCreate(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
 
 
-class Enter_User(UserBase):
+class UserLogin(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
 
 class UserResponse(UserBase):

@@ -13,7 +13,7 @@ from passlib.context import CryptContext
     
 from app.core.models.db_hellper import db_helper
 from core.models import User
-from .schemas import AvtorUser, Create_User, TokenData, UserBase, UserResponse
+from .schemas import AvtorUser, UserCreate, UserResponse
 
 SECRET_KEY = "5a489ff4a2cb133115c02d4ad6d2e2eb0324d11e5527332e8afba53426a6f335"
 ALGORITHM = "HS256"
@@ -29,7 +29,7 @@ def get_password_hash(password):
 async def get_user(
     session: AsyncSession,
     username: str
-)->User:
+)->User|None:
     stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
@@ -92,7 +92,7 @@ async def get_current_active_user(
 
 async def create_user(
     session: AsyncSession, 
-    user_create: Create_User
+    user_create: UserCreate
 )->UserResponse:
     stmt = select(User).where(User.username == user_create.username)
     result = await session.execute(stmt)

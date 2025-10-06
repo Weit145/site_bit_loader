@@ -9,6 +9,7 @@ from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from .schemas import PostResponse
 from core.models import db_helper
 from app.core.models import Post,User
 from app.users.crud import SECRET_KEY,ALGORITHM,oauth2_scheme
@@ -16,10 +17,10 @@ from app.users.crud import SECRET_KEY,ALGORITHM,oauth2_scheme
 async def post_by_id(
     post_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency)
-) -> Post:
-    post = await session.get(Post, post_id)
-    if post is not None:
-        return post
+) -> PostResponse:
+    post_db = await session.get(Post, post_id)
+    if post_db is not None:
+        return PostResponse.model_validate(post_db)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Post {post_id} not found"

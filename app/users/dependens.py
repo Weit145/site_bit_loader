@@ -8,6 +8,8 @@ from core.models import db_helper
 from .schemas import UserBase,UserResponse
 from . import crud
 from app.core.models import User
+
+
 async def user_by_id(
     user_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency)

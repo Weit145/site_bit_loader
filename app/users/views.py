@@ -4,7 +4,7 @@ from datetime import timedelta
 from typing import Annotated
 
 from core.models.db_hellper import db_helper  
-from .schemas import Create_User, Token, AvtorUser, UserBase, UserResponse
+from .schemas import UserCreate, Token, UserBase, UserResponse
 from . import crud
 from .dependens import user_by_id  
 
@@ -16,10 +16,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 @router.post("/", response_model=Token)
 async def create_user(
-    user: Annotated[OAuth2PasswordRequestForm, Depends()],
+    user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )-> Token:
-    user_in = Create_User(username=user.username,password=user.password)
+    user_in = UserCreate(username=user_form.username,password=user_form.password)
     user = await crud.create_user(session=session, user_create=user_in)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = crud.create_access_token(
@@ -29,7 +29,7 @@ async def create_user(
 
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(
+async def delete_me(
     current_user: Annotated[UserResponse, Depends(crud.get_current_user)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
