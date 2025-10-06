@@ -1,5 +1,3 @@
-from typing import Annotated
-from annotated_types import MaxLen, MinLen
 from pydantic import BaseModel, ConfigDict
 
 
