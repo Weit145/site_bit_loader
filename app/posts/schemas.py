@@ -21,4 +21,5 @@ class UpdatePost(PostBase):
 
 class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
+    user_id:int
     id: int

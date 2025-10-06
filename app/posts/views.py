@@ -34,28 +34,28 @@ async def delete_all(
 @router.delete("/{post_id}/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
-    post:Annotated[CreatePost, Depends(post_by_id)],
+    post:Annotated[PostResponse, Depends(post_by_id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    return await crud.delete_by_id(session=session,post=post,user_id=current_user.id)
+    await crud.delete_by_id(session=session,post=post,user_id=current_user.id)
 
 @router.get("/",status_code=status.HTTP_200_OK)
 async def get_all(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
-)->List[PostBase]:
+)->List[PostResponse]:
     return await crud.get_all(session=session)
 
-@router.get("/{post_id}/",response_model=PostBase)
+@router.get("/{post_id}/",response_model=PostResponse)
 async def get_by_id(
-    post:Annotated[СorrectPost, Depends(post_by_id)],
-)->PostBase:
+    post:Annotated[PostResponse, Depends(post_by_id)],
+)->PostResponse:
     return post
 
-@router.put("/{post_id}/",response_model=PostBase)
+@router.put("/{post_id}/",response_model=PostResponse)
 async def put_post(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
     post:Annotated[UpdatePost,Query(mix_length=3)],
-    posts:Annotated[СorrectPost, Depends(post_by_id)],
+    posts:Annotated[PostResponse, Depends(post_by_id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
-)->PostBase:
+)->PostResponse:
     return await crud.update_post(session=session,post=post,posts=posts,user_id=current_user.id)
