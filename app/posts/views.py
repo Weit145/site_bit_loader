@@ -8,7 +8,7 @@ from typing import Annotated,List
 from core.models.db_hellper import db_helper  
 from core.models.post import Post
 
-from .schemas import CreatePost,PostBase,UpdatePost, СorrectPost, PostResponse
+from .schemas import CreatePost,PostBase,UpdatePost, PostResponse
 from . import crud
 from app.users.schemas import UserResponse
 from users.crud import get_current_user
