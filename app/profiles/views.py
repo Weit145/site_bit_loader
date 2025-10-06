@@ -26,35 +26,17 @@ async def create_profile(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->ProfileResponse:
-    if not file.content_type or not file.content_type.startswith('image/'):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="File must be an image"
-        )
-    if !(await session.get(Profile, current_user.id)):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="File must be an image"
-        )
+    return await crud.create_profile(file=file,current_user=current_user,session=session)
 
-    upload_dir = Path("uploads")
-    upload_dir.mkdir(exist_ok=True)
-    if file.filename==None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="File must be an image"
-        )
-    file_extension = Path(file.filename).suffix.lower()
-    unique_filename = f"{current_user.id}_{int(datetime.now().timestamp())}{file_extension}"
-    file_path = upload_dir / unique_filename
-    
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+@router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
+async def delete_all(
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->None:
+    return await crud.delete_all(session=session)
 
-    profile_create = CreateProfile(
-        name_img=unique_filename,
-        img=True,
-        user_id=current_user.id
-    )
-
-    return await crud.create_profile(session=session, profile_create=profile_create)
+@router.delete("/me/",status_code=status.HTTP_204_NO_CONTENT)
+async def delete_me(
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->None:
+    return await crud.delete_profile(session=session,user_id=current_user.id)
