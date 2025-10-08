@@ -1,22 +1,30 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import  HTTPException, status
 
 from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from typing import List
 
-from .schemas import CreatePost, UpdatePost, PostBase, СorrectPost,PostResponse
+from .schemas import UpdatePost, OutPost,PostResponse,CreatePost
 from core.models import Post
+from app.users.dependens import user_by_id
+from .dependens import post_id_user
 
 async def create_post(
     session:AsyncSession,
-    post_create:CreatePost
-)->CreatePost:
-    post=Post(**post_create.model_dump())
+    post_create:CreatePost,
+    user_id: int
+)->PostResponse:
+    post = Post(
+        title=post_create.title,
+        body=post_create.body,
+        user_id=user_id 
+    )
     session.add(post)
     await session.commit()
     await session.refresh(post)
-    return post_create
+    return PostResponse.model_validate(post)
+
 
 async def delete_all(session:AsyncSession)->None:
     stm = select(Post).order_by(Post.id)
@@ -51,32 +59,52 @@ async def delete_by_user_id(
         await session.delete(post)
     await session.commit()
 
-async def get_all(session:AsyncSession)->List[PostResponse]:
+async def postResponse_to_postOut_list(
+    posts:list[PostResponse],
+    session:AsyncSession
+)->list[OutPost]:
+    new_posts:list[OutPost]=[]
+    for post in posts:
+        username=await user_by_id(
+            user_id=post.user_id,
+            session=session
+        )
+        out_post=OutPost(
+            title=post.title,
+            body=post.body,
+            user_name=username.username,
+            id=post.id
+        )
+        new_posts.append(out_post)
+    return new_posts
+
+async def get_all(session:AsyncSession)->List[OutPost]:
     stm = select(Post).order_by(Post.id)
     result :Result  =await session.execute(stm)
-    return list(result.scalars().all())
+    posts=list(result.scalars().all())
+    return await postResponse_to_postOut_list(posts=posts,session=session)
 
 async def update_post(
     session:AsyncSession, 
     post:UpdatePost,
-    posts:PostResponse,
+    post_to_redact:PostResponse,
     user_id:int
-)->PostResponse:
-    if (not posts) or (posts.user_id!=user_id):
+)->OutPost:
+    if (not post_to_redact) or (post_to_redact.user_id!=user_id):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found"
         )
     stmt = (
         update(Post)
-        .where(Post.id == posts.id)
+        .where(Post.id == post_to_redact.id)
         .values(**post.model_dump(exclude={'post_id'}))
         )
     await session.execute(stmt)
     await session.commit()
 
-    stmt_select = select(Post).where(Post.id == posts.id)
+    stmt_select = select(Post).where(Post.id == post_to_redact.id)
     result = await session.execute(stmt_select)
     updated_post = result.scalar_one()
-
-    return PostResponse.model_validate(updated_post)
+    post=PostResponse.model_validate(updated_post)
+    return await post_id_user(post=post,session=session)

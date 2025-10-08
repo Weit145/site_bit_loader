@@ -1,19 +1,14 @@
 from typing import Annotated
 
-from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, Path, status
 
-import jwt
-from jwt.exceptions import InvalidTokenError
-
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
 from .schemas import PostResponse, OutPost
 from core.models import db_helper
 from app.core.models import Post,User
 from app.users.schemas import UserResponse
-from app.users.crud import SECRET_KEY,ALGORITHM,oauth2_scheme
+
 
 async def post_by_id(
     post_id: Annotated[int, Path(ge=1)],
@@ -27,27 +22,6 @@ async def post_by_id(
         detail=f"Post {post_id} not found"
     )
 
-async def true_token(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    session: AsyncSession = Depends(db_helper.session_dependency)
-)-> bool:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        username = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]).get("sub")
-        if username is None:
-            raise credentials_exception
-    except InvalidTokenError:
-        raise credentials_exception
-    stmt = select(User).where(User.username == username)
-    result = await session.execute(stmt)
-    user= result.scalar_one_or_none()
-    if user is None:
-        raise credentials_exception
-    return True
 
 async def post_id_user(
     post:Annotated[PostResponse, Depends(post_by_id)],
@@ -56,13 +30,8 @@ async def post_id_user(
     user_db = await session.get(User, post.user_id)
     if user_db is not None:
         user = UserResponse.model_validate(user_db)
-        return OutPost(title=post.title,body=post.body,user_name=user.username)
+        return OutPost(title=post.title,body=post.body,user_name=user.username,id=post.id)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"User {post.user_id} not found"
     )
-
-# async def correct_post(
-    
-#     session: AsyncSession = Depends(db_helper.session_dependency)
-# ):
