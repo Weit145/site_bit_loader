@@ -40,3 +40,10 @@ async def delete_me(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
     return await crud.delete_profile(session=session,user_id=current_user.id)
+
+@router.get("/me/", response_model=ProfileResponse)
+async def read_profile_me(
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+):
+    return
