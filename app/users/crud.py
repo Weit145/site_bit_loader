@@ -13,17 +13,18 @@ from passlib.context import CryptContext
     
 from app.core.models.db_hellper import db_helper
 from core.models import User
-from .schemas import AvtorUser, UserCreate, UserResponse
+from .schemas import UserCreate, UserResponse
 
 SECRET_KEY = "5a489ff4a2cb133115c02d4ad6d2e2eb0324d11e5527332e8afba53426a6f335"
 ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
-def verify_password(plain_password, hashed_password):
+def verify_password(plain_password, hashed_password)->bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-def get_password_hash(password):
+def get_password_hash(password)->str:
     return pwd_context.hash(password)
 
 async def get_user(
@@ -49,22 +50,18 @@ async def authenticate_user(
     return UserResponse.model_validate(user_db)
 
 def create_access_token(
-    data: dict, 
-    expires_delta: timedelta | None = None
-):
+    data: dict
+)->str:
     to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=30)
+    expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(
+async def decode_jwt(
     token: Annotated[str, Depends(oauth2_scheme)],
-    session: AsyncSession = Depends(db_helper.session_dependency)
-)->UserResponse:
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -74,36 +71,35 @@ async def get_current_user(
         username = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM]).get("sub")
         if username is None:
             raise credentials_exception
+        else:
+            return username
     except InvalidTokenError:
         raise credentials_exception
-    stmt = select(User).where(User.username == username)
-    result = await session.execute(stmt)
-    user_db= result.scalar_one_or_none()
+
+async def get_current_user(
+    username: Annotated[str, Depends(decode_jwt)],
+    session: AsyncSession = Depends(db_helper.session_dependency)
+)->UserResponse:
+    user_db= await get_user(session=session,username=username)
     if user_db is None:
-        raise credentials_exception
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return UserResponse.model_validate(user_db)
 
-async def get_current_active_user(
-    current_user: Annotated[AvtorUser, Depends(get_current_user)],
-)->AvtorUser:
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user
 
 async def create_user(
     session: AsyncSession, 
     user_create: UserCreate
 )->UserResponse:
-    stmt = select(User).where(User.username == user_create.username)
-    result = await session.execute(stmt)
-    existing_user = result.scalar_one_or_none()
-    
-    if existing_user:
+    user_db= await get_user(session=session,username=user_create.username)
+    if user_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered"
         )
-    
     hashed_password = get_password_hash(user_create.password)
     user_data = user_create.model_dump()
     user_data["password"] = hashed_password

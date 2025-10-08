@@ -7,7 +7,6 @@ class PostBase(BaseModel):
 
 
 class CreatePost(PostBase):
-    user_id:int
     pass
 
 class СorrectPost(PostBase):
@@ -19,6 +18,7 @@ class UpdatePost(PostBase):
 
 class OutPost(PostBase):
     user_name:str
+    id: int
     
 class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
