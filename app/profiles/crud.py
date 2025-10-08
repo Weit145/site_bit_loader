@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import List
 
 from app.users.schemas import UserResponse
-from .schemas import CreateProfile,ProfileResponse,ProfileBase
+from .schemas import CreateProfile,ProfileResponse
 from core.models import Profile
 
 
@@ -25,7 +25,7 @@ def clear_upload_dir()->None:
         shutil.rmtree(upload_dir)
     upload_dir.mkdir(exist_ok=True)
 
-def delete_uploaded_file(filename: str) -> bool:
+def delete_uploaded_file(filename: str) -> bool|None:
     upload_dir = Path("app/uploads")
     file_path = upload_dir / filename
     if file_path.exists() and file_path.is_file():
@@ -35,6 +35,11 @@ def file_extension(
     file:UploadFile,
     current_user:UserResponse,
 )-> str:
+    if file.filename==None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Dont open file"
+        )
     file_extension = Path(file.filename).suffix.lower()
     return f"{current_user.id}_{int(datetime.now().timestamp())}{file_extension}"
 
@@ -103,3 +108,5 @@ async def delete_profile(
     await session.delete(existing_profile)
     await session.commit()
     delete_uploaded_file(filename)
+
+

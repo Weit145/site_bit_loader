@@ -9,9 +9,10 @@ from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from .schemas import PostResponse
+from .schemas import PostResponse, OutPost
 from core.models import db_helper
 from app.core.models import Post,User
+from app.users.schemas import UserResponse
 from app.users.crud import SECRET_KEY,ALGORITHM,oauth2_scheme
 
 async def post_by_id(
@@ -47,6 +48,19 @@ async def true_token(
     if user is None:
         raise credentials_exception
     return True
+
+async def post_id_user(
+    post:Annotated[PostResponse, Depends(post_by_id)],
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->OutPost:
+    user_db = await session.get(User, post.user_id)
+    if user_db is not None:
+        user = UserResponse.model_validate(user_db)
+        return OutPost(title=post.title,body=post.body,user_name=user.username)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"User {post.user_id} not found"
+    )
 
 # async def correct_post(
     

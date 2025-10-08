@@ -17,6 +17,9 @@ class СorrectPost(PostBase):
 class UpdatePost(PostBase):
     pass
 
+class OutPost(PostBase):
+    user_name:str
+    
 class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
     user_id:int

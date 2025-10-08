@@ -19,13 +19,19 @@ async def create_user(
     user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )-> Token:
-    user_in = UserCreate(username=user_form.username,password=user_form.password)
-    user = await crud.create_user(session=session, user_create=user_in)
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = crud.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-    return Token(access_token=access_token, token_type="bearer")
+    try:
+        user_in = UserCreate(username=user_form.username,password=user_form.password)
+        user = await crud.create_user(session=session, user_create=user_in)
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = crud.create_access_token(
+            data={"sub": user.username}, expires_delta=access_token_expires
+        )
+        return Token(access_token=access_token, token_type="bearer")
+    except Exception as e:
+        raise HTTPException(
+            status_code=422,
+            detail="Validation error"
+        )
 
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
