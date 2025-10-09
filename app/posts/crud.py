@@ -7,7 +7,7 @@ from typing import List
 
 from .schemas import UpdatePost, OutPost,PostResponse,CreatePost
 from core.models import Post
-from app.users.dependens import user_by_id
+from app.users.dependens import UserById
 from .dependens import post_id_user
 
 async def create_post(
@@ -65,7 +65,7 @@ async def postResponse_to_postOut_list(
 )->list[OutPost]:
     new_posts:list[OutPost]=[]
     for post in posts:
-        username=await user_by_id(
+        username=await UserById(
             user_id=post.user_id,
             session=session
         )
