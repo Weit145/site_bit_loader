@@ -15,13 +15,31 @@ class User(Base):
 
     __tablename__="User"
 
-    username:Mapped[str]=mapped_column(String(32),unique=True, index=True)
+    username:Mapped[str]=mapped_column(
+        String(32),
+        unique=True, 
+        index=True
+    )
 
 
-    password:Mapped[str]=mapped_column(String,unique=False)
+    password:Mapped[str]=mapped_column(
+        String,
+        unique=False
+    )
 
-    disabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    disabled: Mapped[bool] = mapped_column(
+        Boolean, 
+        default=False
+    )
 
-    posts:Mapped[list["Post"]]=relationship(back_populates="user",cascade="all, delete-orphan")
+    posts:Mapped[list["Post"]]=relationship(
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
 
-    profile:Mapped["Profile"]=relationship(back_populates="user",cascade="all, delete-orphan",uselist=False)
+    profile:Mapped["Profile"]=relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        lazy="joined"
+    )

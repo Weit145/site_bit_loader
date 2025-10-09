@@ -11,8 +11,20 @@ if TYPE_CHECKING:
 
 class Profile(Base):
     __tablename__="Profile"
-    name_img: Mapped[str]= mapped_column(String(100), nullable=False)
-    img:Mapped[bool] = mapped_column(Boolean, default=False)
+    name_img: Mapped[str]= mapped_column(
+        String(100), 
+        nullable=False
+    )
+    img:Mapped[bool] = mapped_column(
+        Boolean, 
+        default=False
+    )
 
-    user_id:Mapped[int]=mapped_column(ForeignKey("User.id"),unique=True)
-    user:Mapped["User"] = relationship(back_populates="profile", single_parent=True)
+    user_id:Mapped[int]=mapped_column(
+        ForeignKey("User.id"),
+        unique=True
+    )
+    user:Mapped["User"] = relationship(
+        back_populates="profile", 
+        single_parent=True
+    )    

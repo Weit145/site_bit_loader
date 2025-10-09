@@ -9,7 +9,7 @@ from core.models.db_hellper import db_helper
 from .schemas import UpdatePost, PostResponse,OutPost, CreatePost
 from . import crud
 from app.users.schemas import UserResponse
-from users.crud import get_current_user
+from users.crud import GetCurrentUser
 from .dependens import post_by_id,post_id_user
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
@@ -17,7 +17,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 @router.post("/",response_model=OutPost)
 async def create_post(
     post:CreatePost,
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserResponse, Depends(GetCurrentUser)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->OutPost:
     new_post = await crud.create_post(
@@ -40,7 +40,7 @@ async def delete_all(
     
 @router.delete("/{post_id}/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_by_id(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserResponse, Depends(GetCurrentUser)],
     post:Annotated[PostResponse, Depends(post_by_id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
@@ -60,7 +60,7 @@ async def get_by_id(
     
 @router.put("/{post_id}/",response_model=OutPost)
 async def put_post(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
+    current_user: Annotated[UserResponse, Depends(GetCurrentUser)],
     post:Annotated[UpdatePost,Query(mix_length=3)],
     post_to_redact:Annotated[PostResponse, Depends(post_by_id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
