@@ -7,6 +7,7 @@ from core.models.db_hellper import db_helper
 from .schemas import UserCreate, Token, UserBase, UserResponse
 from . import crud
 from .dependens import User_By_Id_Path,UserForm_TO_UserCreate
+from app.profiles.crud import Create_Profile,Clear_Upload_dir
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,6 +22,10 @@ async def Create_User_EndPoint(
     user = await crud.Create_User(
         session=session, 
         user_create=user_create
+    )
+    await Create_Profile(
+        user=user,
+        session=session,
     )
     access_token = crud.Create_Access_Token(data={"sub": user.username})
     return Token(
@@ -46,6 +51,7 @@ async def Delete_All_Users_EndPoint(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
     await crud.Delete_All_Users(session=session)
+    Clear_Upload_dir()
 
 
 @router.post("/token/", response_model=Token)

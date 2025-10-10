@@ -18,20 +18,7 @@ from app.core.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
-async def Authenticate_User(
-    session: AsyncSession,
-    username: str,
-    password: str
-)->UserResponse:
-    user_db = await Get_User(
-        session=session, 
-        username=username
-    )
-    Check_Userdb_And_Password(
-        user_db=user_db,
-        password=password
-    )
-    return UserResponse.model_validate(user_db)
+# Создание User
 
 async def Create_User(
     session: AsyncSession, 
@@ -48,7 +35,6 @@ async def Create_User(
     await session.refresh(use_and_password)
     return UserResponse.model_validate(use_and_password)
 
-
 def Check_User_Regist(
     user_db:User|None,
 )->None:
@@ -57,20 +43,6 @@ def Check_User_Regist(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered"
         )
-
-def Check_Userdb_And_Password(
-    user_db:User|None,
-    password: str,
-)->None:
-    if (not user_db) or (not Verify_Password(password, user_db.password)):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-def Verify_Password(plain_password, hashed_password)->bool:
-    return settings.pwd_context.verify(plain_password, hashed_password)
 
 def Add_Password_Userdb(
     user_create: UserCreate
@@ -81,56 +53,11 @@ def Add_Password_Userdb(
     user_db = User(**user_data)
     return user_db
 
-
 def Get_Password_Hash(password)->str:
     return settings.pwd_context.hash(password)
 
-def Create_Access_Token(
-    data: dict
-)->str:
-    to_encode = data.copy()
-    expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
-    expire = datetime.now(timezone.utc) + expires_delta
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
-    return encoded_jwt
 
-async def Decode_Jwt(
-    token: Annotated[str, Depends(oauth2_scheme)],
-):
-    try:
-        username = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm]).get("sub")
-        Check_User_Log(username)
-        return username
-    except InvalidTokenError:
-        Check_User_Log(None)
-
-
-async def Get_Current_User(
-    username: Annotated[str, Depends(Decode_Jwt)],
-    session: AsyncSession = Depends(db_helper.session_dependency)
-)->UserResponse:
-    user_db= await Get_User(session=session,username=username)
-    Check_User_Log(user_db)
-    return UserResponse.model_validate(user_db)
-
-def Check_User_Log(
-    user_db:Any,
-)->None:
-    if not user_db:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-async def Get_User(
-    session: AsyncSession,
-    username: str
-)->User|None:
-    stmt = select(User).where(User.username == username)
-    result = await session.execute(stmt)
-    return result.scalar_one_or_none()
+# Удаление UserMe
 
 async def Delete_User(
     session: AsyncSession,
@@ -150,6 +77,9 @@ def Check_User(
             detail="User not found"
         )
 
+
+# Удаление все (ВООБЩЕ ВСЕГО)
+
 async def Delete_All_Users(
     session: AsyncSession
 )->None:
@@ -159,3 +89,91 @@ async def Delete_All_Users(
     for user in users:
         await session.delete(user)
     await session.commit()
+    Clear_Upload_dir()
+    
+
+
+# Вход в акаунт
+    
+async def Authenticate_User(
+    session: AsyncSession,
+    username: str,
+    password: str
+)->UserResponse:
+    user_db = await Get_User(
+        session=session, 
+        username=username
+    )
+    Check_Userdb_And_Password(
+        user_db=user_db,
+        password=password
+    )
+    return UserResponse.model_validate(user_db)
+
+def Check_Userdb_And_Password(
+    user_db:User|None,
+    password: str,
+)->None:
+    if (not user_db) or (not Verify_Password(password, user_db.password)):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+def Verify_Password(plain_password, hashed_password)->bool:
+    return settings.pwd_context.verify(plain_password, hashed_password)
+
+
+# СОздание токена (Вход в акаунт)
+
+def Create_Access_Token(
+    data: dict
+)->str:
+    to_encode = data.copy()
+    expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
+    expire = datetime.now(timezone.utc) + expires_delta
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+    return encoded_jwt
+
+
+
+# Проверка User на вход в акаунт
+async def Decode_Jwt(
+    token: Annotated[str, Depends(oauth2_scheme)],
+):
+    try:
+        username = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm]).get("sub")
+        Check_User_Log(username)
+        return username
+    except InvalidTokenError:
+        Check_User_Log(None)
+
+
+async def Get_Current_User(
+    username: Annotated[str, Depends(Decode_Jwt)],
+    session: AsyncSession = Depends(db_helper.session_dependency)
+)->UserResponse:
+    user_db= await Get_User(session=session,username=username)
+    Check_User_Log(user_db)
+    return UserResponse.model_validate(user_db)
+
+
+def Check_User_Log(
+    user_db:Any,
+)->None:
+    if not user_db:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+async def Get_User(
+    session: AsyncSession,
+    username: str
+)->User|None:
+    stmt = select(User).where(User.username == username)
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
