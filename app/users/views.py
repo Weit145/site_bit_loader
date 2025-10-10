@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from typing import Annotated
@@ -14,15 +14,15 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/", response_model=Token)
-async def create_user(
+async def Create_User_EndPoint(
     user_create :  Annotated[UserCreate, Depends(UserFormTOUserCreate)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )-> Token:
-    user = await crud.CreateUser(
+    user = await crud.Create_User(
         session=session, 
         user_create=user_create
     )
-    access_token = crud.CreateAccessToken(data={"sub": user.username})
+    access_token = crud.Create_Access_Token(data={"sub": user.username})
     return Token(
         access_token=access_token, 
         token_type="bearer"
@@ -31,48 +31,48 @@ async def create_user(
 
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_me(
-    current_user: Annotated[UserResponse, Depends(crud.GetCurrentUser)],
+async def Delete_Me_User_EndPoint(
+    current_user: Annotated[UserResponse, Depends(crud.Get_Current_User)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    await crud.DeleteUser(
+    await crud.Delete_User(
         session=session,
         user_id=current_user.id
     )
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-async def DeleteUsers_all(
+async def Delete_All_Users_EndPoint(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    await crud.DeleteUsers_all(session=session)
+    await crud.Delete_All_Users(session=session)
 
 
 @router.post("/token/", response_model=Token)
-async def login_for_access_token(
+async def Login_For_Access_Token_EndPoint(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 ) -> Token:
-    user = await crud.AuthenticateUser(
+    user = await crud.Authenticate_User(
         session=session, 
         username=form_data.username, 
         password=form_data.password
     )
-    access_token = crud.CreateAccessToken(data={"sub": user.username})
+    access_token = crud.Create_Access_Token(data={"sub": user.username})
     return Token(
         access_token=access_token, 
         token_type="bearer"
     )
 
 @router.get("/me/", response_model=UserResponse)  
-async def read_users_me(
-    current_user: Annotated[UserResponse, Depends(crud.GetCurrentUser)],
+async def Read_Me_User_EndPoint(
+    current_user: Annotated[UserResponse, Depends(crud.Get_Current_User)],
 )->UserResponse:
     return current_user
 
 
 @router.get("/{user_id}/", response_model=UserBase)
-async def get_user(
+async def Get_User_By_Id(
     user:Annotated[ UserResponse, Depends(UserByIdPath)]
 )->UserResponse:
     return user
