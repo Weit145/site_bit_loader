@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .schemas import ProfileResponse
 from core.models import db_helper
 from app.core.models import Profile
-async def post_by_id(
+async def profile_by_id(
     profile_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency)
 ) -> ProfileResponse:
@@ -16,5 +16,5 @@ async def post_by_id(
         return ProfileResponse.model_validate(profile_db)
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Post {profile_id} not found"
+        detail=f"Profile {profile_id} not found"
     )
