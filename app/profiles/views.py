@@ -26,20 +26,20 @@ async def create_profile(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->ProfileResponse:
-    return await crud.create_profile(file=file,current_user=current_user,session=session)
+    return await crud.Create_Profile(file=file,current_user=current_user,session=session)
 
 @router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_all(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    return await crud.delete_all(session=session)
+    return await crud.Delete_All_Profile(session=session)
 
 @router.delete("/me/",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    return await crud.delete_profile(session=session,user_id=current_user.id)
+    return await crud.Delete_Profile(session=session,user_id=current_user.id)
 
 @router.get("/me/", response_model=ProfileResponse)
 async def read_profile_me(
