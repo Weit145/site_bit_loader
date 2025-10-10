@@ -1,11 +1,8 @@
 from asyncio import current_task
 
-from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker,async_scoped_session
 
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker,async_scoped_session,AsyncSession
-from sqlalchemy.orm import sessionmaker
-
-from ..config import settings, Setting
+from core.config import settings
 
 class DatabaseHellper:
     def __init__(self, url:str, echo:bool = False):
