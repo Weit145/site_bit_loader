@@ -6,7 +6,7 @@ from typing import Annotated
 from core.models.db_hellper import db_helper  
 from .schemas import UserCreate, Token, UserBase, UserResponse
 from . import crud
-from .dependens import UserByIdPath,UserFormTOUserCreate
+from .dependens import User_By_Id_Path,UserForm_TO_UserCreate
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post("/", response_model=Token)
 async def Create_User_EndPoint(
-    user_create :  Annotated[UserCreate, Depends(UserFormTOUserCreate)],
+    user_create :  Annotated[UserCreate, Depends(UserForm_TO_UserCreate)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )-> Token:
     user = await crud.Create_User(
@@ -72,7 +72,7 @@ async def Read_Me_User_EndPoint(
 
 
 @router.get("/{user_id}/", response_model=UserBase)
-async def Get_User_By_Id(
-    user:Annotated[ UserResponse, Depends(UserByIdPath)]
+async def Get_User_By_Id_EndPoint(
+    user:Annotated[ UserResponse, Depends(User_By_Id_Path)]
 )->UserResponse:
     return user

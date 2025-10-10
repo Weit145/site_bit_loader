@@ -6,64 +6,59 @@ from typing import Annotated,List
 
 from core.models.db_hellper import db_helper  
 
-from .schemas import UpdatePost, PostResponse,OutPost, CreatePost
+from .schemas import UpdatePost,OutPost, CreatePost
 from . import crud
+from app.core.models.post import Post
 from app.users.schemas import UserResponse
 from users.crud import Get_Current_User
-from .dependens import post_by_id,post_id_user
+from .dependens import Postdb_By_Id
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 @router.post("/",response_model=OutPost)
-async def create_post(
+async def Create_Post_EndPoint(
     post:CreatePost,
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->OutPost:
-    new_post = await crud.create_post(
+    return await crud.Create_Post(
         post_create=post,
         user_id=current_user.id,
         session=session
     )
-    return OutPost(
-        title=new_post.title,
-        body=new_post.body,
-        user_name=current_user.username,
-        id=new_post.id
-    )
 
 @router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
-async def delete_all(
+async def Dellete_All_Posts_EndPoint(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    return await crud.delete_all(session=session)
+    return await crud.Dellete_All_Posts(session=session)
     
 @router.delete("/{post_id}/",status_code=status.HTTP_204_NO_CONTENT)
-async def delete_by_id(
+async def Delete_Postdb_By_Id_EndPoint(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
-    post:Annotated[PostResponse, Depends(post_by_id)],
+    post_db:Annotated[Post, Depends(Postdb_By_Id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    await crud.delete_by_id(session=session,post=post,user_id=current_user.id)
+    await crud.Delete_Postdb_By_Id(session=session,post_db=post_db,username=current_user.username)
 
 @router.get("/",status_code=status.HTTP_200_OK)
-async def get_all(
+async def Get_All_Posts_EndPoint(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->List[OutPost]:
-    return await crud.get_all(session=session)
+    return await crud.Get_All_Posts(session=session)
 
 @router.get("/{post_id}/",response_model=OutPost)
-async def get_by_id(
-    post:Annotated[OutPost,Depends(post_id_user)]
+async def Get_By_Id_Post_EndPoint(
+    post_db:Annotated[Post,Depends(Postdb_By_Id)]
 )->OutPost:
-    return post
+    return crud.Postdb_To_PostOut(post_db=post_db)
     
 @router.put("/{post_id}/",response_model=OutPost)
-async def put_post(
+async def Update_Post_EndPoint(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
-    post:Annotated[UpdatePost,Query(mix_length=3)],
-    post_to_redact:Annotated[PostResponse, Depends(post_by_id)],
+    post:UpdatePost,
+    post_to_redact:Annotated[Post, Depends(Postdb_By_Id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->OutPost:
-    return await crud.update_post(session=session,post=post,post_to_redact=post_to_redact,user_id=current_user.id)
+    return await crud.Update_Post(session=session,post=post,post_to_redact=post_to_redact,user_id=current_user.id)
 
