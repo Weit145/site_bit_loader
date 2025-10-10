@@ -1,49 +1,42 @@
-from fastapi import APIRouter, Depends, status, HTTPException,Query, UploadFile, File
+from fastapi import APIRouter, Depends, status
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
 from typing import Annotated
 
-from pathlib import Path
-import shutil
-from datetime import datetime
-
 from core.models.db_hellper import db_helper 
-from core.models.profile import Profile 
 
-
+from core.models.profile import Profile
 from . import crud
-from .schemas import CreateProfile,ProfileResponse,ProfileBase
-from app.users.schemas import UserResponse
-from users.crud import Get_Current_User
+from .schemas import ProfileResponse
+from .dependens import Add_Img_In_Folder,Profiledb_By_UserId
 
 router = APIRouter(prefix="/profile", tags=["Profile"])
 
-@router.post("/",response_model=ProfileResponse)
-async def create_profile(
-    file:Annotated[UploadFile,File(description="Image file")],
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+@router.put("/me/", response_model=ProfileResponse)
+async def Update_Profile_EndPoint(
+    new_profile:Annotated[Profile, Depends(Add_Img_In_Folder)],
+    profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->ProfileResponse:
-    return await crud.Create_Profile(file=file,current_user=current_user,session=session)
+    return await crud.Update_Profile(new_profile=new_profile,profile=profile,session=session)
+
 
 @router.delete("/",status_code=status.HTTP_204_NO_CONTENT)
-async def delete_all(
+async def Reset_All_Profiles_EndPoint(
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    return await crud.Delete_All_Profile(session=session)
+    return await crud.Reset_All_Profile(session=session)
 
 @router.delete("/me/",status_code=status.HTTP_204_NO_CONTENT)
-async def delete_me(
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+async def Reset_Me_EndPoint(
+    profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->None:
-    return await crud.Delete_Profile(session=session,user_id=current_user.id)
+    return await crud.Reset_Profile(session=session,profile=profile)
 
 @router.get("/me/", response_model=ProfileResponse)
 async def read_profile_me(
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
-    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
-):
-    return
+    profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
+)->ProfileResponse:
+    return ProfileResponse.model_validate(profile)

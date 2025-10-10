@@ -1,12 +1,19 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Path, status
+from fastapi import Depends, HTTPException, Path, status,UploadFile
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
+from pathlib import Path
+import shutil
+
+from app.users.schemas import UserResponse
 from .schemas import ProfileResponse
 from core.models import db_helper
 from app.core.models import Profile
+from users.crud import Get_Current_User
+
 async def profile_by_id(
     profile_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency)
@@ -18,3 +25,60 @@ async def profile_by_id(
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Profile {profile_id} not found"
     )
+    
+async def Check_File(
+    file:UploadFile,
+)->UploadFile:
+    if not file.content_type or not file.content_type.startswith('image/') or file.filename==None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Problem file"
+        )
+    return file
+
+async def Profiledb_By_UserId(
+    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+    session: AsyncSession = Depends(db_helper.session_dependency)
+)->Profile:
+    stmt = select(Profile).where(Profile.user_id == current_user.id)
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none() 
+
+
+
+async def Add_Img_In_Folder(
+    file:UploadFile,
+    current_user:UserResponse,
+)->Profile:
+    upload=upload_dir()
+    unique_filename = file_extension(
+        file=file,
+        current_user=current_user
+    )
+    file_path = upload / unique_filename
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    return Profile(
+        name_img=unique_filename,
+        img=True,
+        user_id=current_user.id,
+    )
+
+def upload_dir()->Path:
+    upload_dir = Path("app/uploads")
+    upload_dir.mkdir(exist_ok=True)
+    return upload_dir
+
+def file_extension(
+    file:UploadFile,
+    current_user:UserResponse,
+)-> str:
+    if file.filename==None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Dont open file"
+        )
+    file_extension = Path(file.filename).suffix.lower()
+    return f"{current_user.id}_{int(datetime.now().timestamp())}{file_extension}"

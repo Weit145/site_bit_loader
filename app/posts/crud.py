@@ -8,6 +8,8 @@ from typing import List
 from .schemas import UpdatePost, OutPost,CreatePost
 from core.models import Post
 
+# Срздания поста
+
 async def Create_Post(
     session:AsyncSession,
     post_create:CreatePost,
@@ -29,6 +31,8 @@ async def Create_Post(
     )
 
 
+# Удаление всех постов
+
 async def Dellete_All_Posts(session:AsyncSession)->None:
     stm = select(Post).order_by(Post.id)
     result :Result  =await session.execute(stm)
@@ -36,6 +40,9 @@ async def Dellete_All_Posts(session:AsyncSession)->None:
     for post in posts:
         await session.delete(post)
     await session.commit()
+
+
+# Удаление по Id поста
 
 async def Delete_Postdb_By_Id(
     session:AsyncSession,
@@ -50,6 +57,8 @@ async def Delete_Postdb_By_Id(
     await session.delete(post_db)
     await session.commit()
 
+
+# Выввод всех постов
 
 async def Get_All_Posts(session:AsyncSession)->List[OutPost]:
     stm = select(Post).order_by(Post.id)
@@ -67,6 +76,25 @@ def Postdb_to_PostOut_list(
     return new_posts
 
 
+# Вывод одного поста по Id
+
+def Postdb_To_PostOut(
+    post_db:Post|None
+)->OutPost:
+    if not post_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+    return OutPost(
+            title=post_db.title,
+            body=post_db.body,
+            user_name=post_db.user.username,
+            id=post_db.id
+        )
+
+# Обновление поста по Id поста
+
 async def Update_Post(
     session:AsyncSession, 
     post:UpdatePost,
@@ -77,7 +105,6 @@ async def Update_Post(
         post_to_redact=post_to_redact,
         user_id=user_id,
     )
-    
     await Redact_Postdb(
         session=session,
         post_to_redact=post_to_redact,
@@ -119,19 +146,3 @@ async def Update_Postdb(
     stmt_select = select(Post).where(Post.id == post_to_redact.id)
     result = await session.execute(stmt_select)
     return result.scalar_one()
-
-
-def Postdb_To_PostOut(
-    post_db:Post|None
-)->OutPost:
-    if not post_db:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Post not found"
-        )
-    return OutPost(
-            title=post_db.title,
-            body=post_db.body,
-            user_name=post_db.user.username,
-            id=post_db.id
-        )
