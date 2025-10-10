@@ -13,7 +13,8 @@ class Post(Base):
     __tablename__="Post"
     title: Mapped[str]= mapped_column(
         String(100), 
-        unique=False
+        unique=False,
+        nullable=False
     )
     body: Mapped[str]=mapped_column(
         Text,

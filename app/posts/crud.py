@@ -5,16 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from typing import List
 
-from .schemas import UpdatePost, OutPost,PostResponse,CreatePost
+from .schemas import UpdatePost, OutPost,CreatePost
 from core.models import Post
-from app.users.dependens import UserById
-from .dependens import post_id_user
 
-async def create_post(
+async def Create_Post(
     session:AsyncSession,
     post_create:CreatePost,
     user_id: int
-)->PostResponse:
+)->OutPost:
     post = Post(
         title=post_create.title,
         body=post_create.body,
@@ -23,10 +21,15 @@ async def create_post(
     session.add(post)
     await session.commit()
     await session.refresh(post)
-    return PostResponse.model_validate(post)
+    return OutPost(
+        id=post.id,
+        title=post.title,
+        body=post.body,
+        user_name=post.user.username,
+    )
 
 
-async def delete_all(session:AsyncSession)->None:
+async def Dellete_All_Posts(session:AsyncSession)->None:
     stm = select(Post).order_by(Post.id)
     result :Result  =await session.execute(stm)
     posts = result.scalars().all()
@@ -34,13 +37,12 @@ async def delete_all(session:AsyncSession)->None:
         await session.delete(post)
     await session.commit()
 
-async def delete_by_id(
+async def Delete_Postdb_By_Id(
     session:AsyncSession,
-    post:PostResponse,
-    user_id:int
+    post_db:Post,
+    username:str
 )->None:
-    post_db = await session.get(Post, post.id)
-    if post.user_id!=user_id:
+    if post_db.user.username!=username:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Is not your post"
@@ -48,53 +50,60 @@ async def delete_by_id(
     await session.delete(post_db)
     await session.commit()
 
-async def delete_by_user_id(
-    session:AsyncSession,
-    user_id:int
-)->None:
-    stm = select(Post).where(Post.user_id==user_id)
-    result :Result  =await session.execute(stm)
-    posts = result.scalars().all()
-    for post in posts:
-        await session.delete(post)
-    await session.commit()
 
-async def postResponse_to_postOut_list(
-    posts:list[PostResponse],
-    session:AsyncSession
+async def Get_All_Posts(session:AsyncSession)->List[OutPost]:
+    stm = select(Post).order_by(Post.id)
+    result :Result  =await session.execute(stm)
+    posts_db=list(result.scalars().all())
+    return Postdb_to_PostOut_list(posts_db=posts_db)
+
+def Postdb_to_PostOut_list(
+    posts_db:list[Post],
 )->list[OutPost]:
-    new_posts:list[OutPost]=[]
-    for post in posts:
-        username=await UserById(
-            user_id=post.user_id,
-            session=session
-        )
-        out_post=OutPost(
-            title=post.title,
-            body=post.body,
-            user_name=username.username,
-            id=post.id
-        )
+    new_posts:list[OutPost]=[]  
+    for post in posts_db:
+        out_post=Postdb_To_PostOut(post)
         new_posts.append(out_post)
     return new_posts
 
-async def get_all(session:AsyncSession)->List[OutPost]:
-    stm = select(Post).order_by(Post.id)
-    result :Result  =await session.execute(stm)
-    posts=list(result.scalars().all())
-    return await postResponse_to_postOut_list(posts=posts,session=session)
 
-async def update_post(
+async def Update_Post(
     session:AsyncSession, 
     post:UpdatePost,
-    post_to_redact:PostResponse,
+    post_to_redact:Post,
     user_id:int
 )->OutPost:
+    Check_Post_And_User_Correct(
+        post_to_redact=post_to_redact,
+        user_id=user_id,
+    )
+    
+    await Redact_Postdb(
+        session=session,
+        post_to_redact=post_to_redact,
+        post=post,
+    )
+    post_db= await Update_Postdb(
+        session=session,
+        post_to_redact=post_to_redact,
+    )
+    return Postdb_To_PostOut(post_db=post_db)
+
+def Check_Post_And_User_Correct(
+    post_to_redact:Post,
+    user_id:int
+)->None:
     if (not post_to_redact) or (post_to_redact.user_id!=user_id):
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Post not found"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not enough permissions"
         )
+
+async def Redact_Postdb(
+    session:AsyncSession, 
+    post_to_redact:Post,
+    post:UpdatePost,
+)->None:
     stmt = (
         update(Post)
         .where(Post.id == post_to_redact.id)
@@ -102,9 +111,27 @@ async def update_post(
         )
     await session.execute(stmt)
     await session.commit()
-
+    
+async def Update_Postdb(
+    session:AsyncSession, 
+    post_to_redact:Post,
+)->Post:
     stmt_select = select(Post).where(Post.id == post_to_redact.id)
     result = await session.execute(stmt_select)
-    updated_post = result.scalar_one()
-    post=PostResponse.model_validate(updated_post)
-    return await post_id_user(post=post,session=session)
+    return result.scalar_one()
+
+
+def Postdb_To_PostOut(
+    post_db:Post|None
+)->OutPost:
+    if not post_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+    return OutPost(
+            title=post_db.title,
+            body=post_db.body,
+            user_name=post_db.user.username,
+            id=post_db.id
+        )
