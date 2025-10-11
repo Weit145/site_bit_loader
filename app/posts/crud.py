@@ -15,20 +15,15 @@ async def Create_Post(
     post_create:CreatePost,
     user_id: int
 )->OutPost:
-    post = Post(
+    post_db = Post(
         title=post_create.title,
         body=post_create.body,
         user_id=user_id 
     )
-    session.add(post)
+    session.add(post_db)
     await session.commit()
-    await session.refresh(post)
-    return OutPost(
-        id=post.id,
-        title=post.title,
-        body=post.body,
-        user_name=post.user.username,
-    )
+    await session.refresh(post_db)
+    return Postdb_To_PostOut(post_db=post_db)
 
 
 # Удаление всех постов
@@ -90,7 +85,8 @@ def Postdb_To_PostOut(
             title=post_db.title,
             body=post_db.body,
             user_name=post_db.user.username,
-            id=post_db.id
+            id=post_db.id,
+            name_img=post_db.user.profile.name_img
         )
 
 # Обновление поста по Id поста
