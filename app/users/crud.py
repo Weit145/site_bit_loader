@@ -121,4 +121,6 @@ async def Get_User(
 )->User|None:
     stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
-    return result.scalar_one_or_none()
+    user_db= result.scalar_one_or_none()
+    return user_db
+
