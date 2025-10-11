@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status, Form
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,18 +6,20 @@ from typing import Annotated,List
 
 from core.models.db_hellper import db_helper  
 
+from core.models.post import Post
+
+from users.schemas import UserResponse
+from users.dependens import Get_Current_User
+
 from .schemas import UpdatePost,OutPost, CreatePost
 from . import crud
-from app.core.models.post import Post
-from app.users.schemas import UserResponse
-from users.crud import Get_Current_User
 from .dependens import Postdb_By_Id
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 @router.post("/",response_model=OutPost)
 async def Create_Post_EndPoint(
-    post:CreatePost,
+    post:Annotated[CreatePost,Form()],
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->OutPost:
@@ -56,7 +58,7 @@ async def Get_By_Id_Post_EndPoint(
 @router.put("/{post_id}/",response_model=OutPost)
 async def Update_Post_EndPoint(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
-    post:UpdatePost,
+    post:Annotated[UpdatePost,Form()],
     post_to_redact:Annotated[Post, Depends(Postdb_By_Id)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->OutPost:

@@ -9,10 +9,6 @@ class PostBase(BaseModel):
 class CreatePost(PostBase):
     pass
 
-class СorrectPost(PostBase):
-    user_id:int
-    pass
-
 class UpdatePost(PostBase):
     pass
 

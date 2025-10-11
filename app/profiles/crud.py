@@ -7,9 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from pathlib import Path
 
-from app.users.schemas import UserResponse
-from .schemas import ProfileResponse
 from core.models import Profile
+
+from users.schemas import UserResponse
+
+from .schemas import ProfileResponse
 
 # Создание профеля испотлбзуеться user/views.py
 

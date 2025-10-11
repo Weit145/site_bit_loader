@@ -6,13 +6,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from pathlib import Path
+
 import shutil
 
-from app.users.schemas import UserResponse
+from datetime import datetime
+
+from users.schemas import UserResponse
 from .schemas import ProfileResponse
 from core.models import db_helper
-from app.core.models import Profile
-from users.crud import Get_Current_User
+from core.models import Profile
+from users.dependens import Get_Current_User
 
 async def profile_by_id(
     profile_id: Annotated[int, Path(ge=1)],
@@ -48,7 +51,7 @@ async def Profiledb_By_UserId(
 
 async def Add_Img_In_Folder(
     file:UploadFile,
-    current_user:UserResponse,
+    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
 )->Profile:
     upload=upload_dir()
     unique_filename = file_extension(

@@ -4,11 +4,13 @@ from fastapi import Depends, HTTPException, Path, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 
 from core.models import db_helper
-from .schemas import UserResponse,UserCreate
-from app.core.models import User
+from core.models import User
+
+from .schemas import UserResponse,UserCreate,UserLogin
+from . import token
+from . import crud
 
 
 
@@ -38,3 +40,26 @@ async def UserForm_TO_UserCreate(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation error"
         )
+
+async def UserForm_TO_UserLogin(
+    user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
+):
+    try:
+        user_create = UserLogin(
+            username=user_form.username,
+            password=user_form.password
+        )
+        return user_create
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Validation error"
+        )
+
+async def Get_Current_User(
+    username: Annotated[str, Depends(token.Decode_Jwt)],
+    session: AsyncSession = Depends(db_helper.session_dependency)
+)->UserResponse:
+    user_db= await crud.Get_User(session=session,username=username)
+    token.Check_User_Log(user_db)
+    return UserResponse.model_validate(user_db)

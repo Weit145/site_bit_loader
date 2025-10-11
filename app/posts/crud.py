@@ -5,8 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from typing import List
 
-from .schemas import UpdatePost, OutPost,CreatePost
 from core.models import Post
+
+from .schemas import UpdatePost, OutPost,CreatePost
 
 # Срздания поста
 
