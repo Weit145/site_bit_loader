@@ -4,10 +4,8 @@ from fastapi import Depends, HTTPException, Path, status
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import PostResponse, OutPost
 from core.models import db_helper
-from app.core.models import Post,User
-from app.users.schemas import UserResponse
+from core.models import Post
 
 
 async def Postdb_By_Id(

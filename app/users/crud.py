@@ -1,22 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.engine import Result
 from sqlalchemy import select
-from datetime import datetime, timedelta, timezone
-from typing import Annotated, Any
 
-import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
+from fastapi import HTTPException, status
 
-    
-from app.core.models.db_hellper import db_helper
 from core.models import User
-from .schemas import UserCreate, UserResponse
-from app.core.config import settings
+from core.config import settings
+
+from .schemas import UserCreate, UserResponse, UserLogin
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 # Создание User
 
@@ -89,24 +82,21 @@ async def Delete_All_Users(
     for user in users:
         await session.delete(user)
     await session.commit()
-    Clear_Upload_dir()
     
-
 
 # Вход в акаунт
     
 async def Authenticate_User(
     session: AsyncSession,
-    username: str,
-    password: str
+    user:UserLogin,
 )->UserResponse:
     user_db = await Get_User(
         session=session, 
-        username=username
+        username=user.username
     )
     Check_Userdb_And_Password(
         user_db=user_db,
-        password=password
+        password=user.password
     )
     return UserResponse.model_validate(user_db)
 
@@ -124,51 +114,6 @@ def Check_Userdb_And_Password(
 def Verify_Password(plain_password, hashed_password)->bool:
     return settings.pwd_context.verify(plain_password, hashed_password)
 
-
-# СОздание токена (Вход в акаунт)
-
-def Create_Access_Token(
-    data: dict
-)->str:
-    to_encode = data.copy()
-    expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
-    expire = datetime.now(timezone.utc) + expires_delta
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
-    return encoded_jwt
-
-
-
-# Проверка User на вход в акаунт
-async def Decode_Jwt(
-    token: Annotated[str, Depends(oauth2_scheme)],
-):
-    try:
-        username = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm]).get("sub")
-        Check_User_Log(username)
-        return username
-    except InvalidTokenError:
-        Check_User_Log(None)
-
-
-async def Get_Current_User(
-    username: Annotated[str, Depends(Decode_Jwt)],
-    session: AsyncSession = Depends(db_helper.session_dependency)
-)->UserResponse:
-    user_db= await Get_User(session=session,username=username)
-    Check_User_Log(user_db)
-    return UserResponse.model_validate(user_db)
-
-
-def Check_User_Log(
-    user_db:Any,
-)->None:
-    if not user_db:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
 
 async def Get_User(
     session: AsyncSession,
