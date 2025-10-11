@@ -13,7 +13,7 @@ from users.dependens import Get_Current_User
 
 from .schemas import UpdatePost,OutPost, CreatePost
 from . import crud
-from .dependens import Postdb_By_Id
+from .dependens import Postdb_By_Id, Check_Post_And_User_Correct
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
@@ -57,10 +57,9 @@ async def Get_By_Id_Post_EndPoint(
     
 @router.put("/{post_id}/",response_model=OutPost)
 async def Update_Post_EndPoint(
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
     post:Annotated[UpdatePost,Form()],
-    post_to_redact:Annotated[Post, Depends(Postdb_By_Id)],
+    post_to_redact:Annotated[Post, Depends(Check_Post_And_User_Correct)],
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->OutPost:
-    return await crud.Update_Post(session=session,post=post,post_to_redact=post_to_redact,user_id=current_user.id)
+    return await crud.Update_Post(session=session,post=post,post_to_redact=post_to_redact)
 

@@ -72,8 +72,6 @@ def Postdb_to_PostOut_list(
     return new_posts
 
 
-# Вывод одного поста по Id
-
 def Postdb_To_PostOut(
     post_db:Post|None
 )->OutPost:
@@ -96,12 +94,7 @@ async def Update_Post(
     session:AsyncSession, 
     post:UpdatePost,
     post_to_redact:Post,
-    user_id:int
 )->OutPost:
-    Check_Post_And_User_Correct(
-        post_to_redact=post_to_redact,
-        user_id=user_id,
-    )
     await Redact_Postdb(
         session=session,
         post_to_redact=post_to_redact,
@@ -113,15 +106,6 @@ async def Update_Post(
     )
     return Postdb_To_PostOut(post_db=post_db)
 
-def Check_Post_And_User_Correct(
-    post_to_redact:Post,
-    user_id:int
-)->None:
-    if (not post_to_redact) or (post_to_redact.user_id!=user_id):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
-        )
 
 async def Redact_Postdb(
     session:AsyncSession, 
