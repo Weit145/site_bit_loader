@@ -17,6 +17,7 @@ class UpdatePost(PostBase):
     pass
 
 class OutPost(PostBase):
+    name_img:str
     user_name:str
     id: int
     
