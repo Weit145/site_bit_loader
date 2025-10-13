@@ -2,11 +2,13 @@ import asyncio
 from logging.config import fileConfig
 
 from sqlalchemy import pool
-import sqlalchemy
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+
+from app.core.models import Base
+from app.core.config import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,8 +23,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.core.models import Base
-from app.core.config import settings
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -30,6 +31,7 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 config.set_main_option("sqlalchemy.url", settings.db_url)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
