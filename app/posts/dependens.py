@@ -14,7 +14,9 @@ async def Postdb_By_Id(
     post_db = await session.get(Post, post_id)
     if post_db is not None:
         return post_db
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post {post_id} not found")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail=f"Post {post_id} not found"
+    )
 
 
 def Check_Post_And_User_Correct(
@@ -22,5 +24,7 @@ def Check_Post_And_User_Correct(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
 ) -> Post:
     if (not post_to_redact) or (post_to_redact.user_id != current_user.id):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions"
+        )
     return post_to_redact

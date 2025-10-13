@@ -15,7 +15,9 @@ def Create_Access_Token(data: dict) -> str:
     expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
     expire = datetime.now(UTC) + expires_delta
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+    encoded_jwt = jwt.encode(
+        to_encode, settings.secret_key, algorithm=settings.algorithm
+    )
     return encoded_jwt
 
 
@@ -23,9 +25,9 @@ async def Decode_Jwt(
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
     try:
-        username = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm]).get(
-            "sub"
-        )
+        username = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        ).get("sub")
         Check_User_Log(username)
         return username
     except InvalidTokenError:

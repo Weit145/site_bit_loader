@@ -8,7 +8,9 @@ from .schemas import CreatePost, OutPost, UpdatePost
 # Срздания поста
 
 
-async def Create_Post(session: AsyncSession, post_create: CreatePost, user_id: int) -> OutPost:
+async def Create_Post(
+    session: AsyncSession, post_create: CreatePost, user_id: int
+) -> OutPost:
     post_db = Post(title=post_create.title, body=post_create.body, user_id=user_id)
     session.add(post_db)
     await session.commit()
@@ -31,9 +33,13 @@ async def Dellete_All_Posts(session: AsyncSession) -> None:
 # Удаление по Id поста
 
 
-async def Delete_Postdb_By_Id(session: AsyncSession, post_db: Post, username: str) -> None:
+async def Delete_Postdb_By_Id(
+    session: AsyncSession, post_db: Post, username: str
+) -> None:
     if post_db.user.username != username:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Is not your post")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Is not your post"
+        )
     await session.delete(post_db)
     await session.commit()
 
@@ -60,7 +66,9 @@ def Postdb_to_PostOut_list(
 
 def Postdb_To_PostOut(post_db: Post | None) -> OutPost:
     if not post_db:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
+        )
     return OutPost(
         title=post_db.title,
         body=post_db.body,

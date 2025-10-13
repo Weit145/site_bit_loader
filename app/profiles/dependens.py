@@ -28,8 +28,14 @@ async def profile_by_id(
 async def Check_File(
     file: UploadFile,
 ) -> UploadFile:
-    if not file.content_type or not file.content_type.startswith("image/") or file.filename is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file")
+    if (
+        not file.content_type
+        or not file.content_type.startswith("image/")
+        or file.filename is None
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file"
+        )
     return file
 
 
@@ -77,6 +83,8 @@ def file_extension(
     current_user: UserResponse,
 ) -> str:
     if file.filename is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Dont open file")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Dont open file"
+        )
     file_extension = Path_oc(file.filename).suffix.lower()
     return f"{current_user.id}_{int(datetime.now().timestamp())}{file_extension}"

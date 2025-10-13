@@ -22,7 +22,9 @@ class DatabaseHellper:
 
     def get_scoped_session(self):
         # Создаем scoped сессию - одна сессия на одну асинхронную задачу
-        session = async_scoped_session(session_factory=self.session_factory, scopefunc=current_task)
+        session = async_scoped_session(
+            session_factory=self.session_factory, scopefunc=current_task
+        )
         return session
 
     async def session_dependency(self):
