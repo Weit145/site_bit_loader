@@ -20,7 +20,6 @@ def Create_Access_Token(data: dict) -> str:
     )
     return encoded_jwt
 
-
 async def Decode_Jwt(
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
