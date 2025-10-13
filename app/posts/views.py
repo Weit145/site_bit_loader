@@ -20,7 +20,9 @@ async def Create_Post_EndPoint(
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> OutPost:
-    return await crud.Create_Post(post_create=post, user_id=current_user.id, session=session)
+    return await crud.Create_Post(
+        post_create=post, user_id=current_user.id, session=session
+    )
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
@@ -36,7 +38,9 @@ async def Delete_Postdb_By_Id_EndPoint(
     post_db: Annotated[Post, Depends(Postdb_By_Id)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> None:
-    await crud.Delete_Postdb_By_Id(session=session, post_db=post_db, username=current_user.username)
+    await crud.Delete_Postdb_By_Id(
+        session=session, post_db=post_db, username=current_user.username
+    )
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
@@ -59,4 +63,6 @@ async def Update_Post_EndPoint(
     post_to_redact: Annotated[Post, Depends(Check_Post_And_User_Correct)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> OutPost:
-    return await crud.Update_Post(session=session, post=post, post_to_redact=post_to_redact)
+    return await crud.Update_Post(
+        session=session, post=post, post_to_redact=post_to_redact
+    )

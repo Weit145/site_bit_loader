@@ -56,7 +56,9 @@ def Check_User(
     user_db: User | None,
 ) -> None:
     if not user_db:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
 
 
 # Удаление все (ВООБЩЕ ВСЕГО)

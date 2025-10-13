@@ -18,7 +18,9 @@ async def Update_Profile_EndPoint(
     profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> ProfileResponse:
-    return await crud.Update_Profile(new_profile=new_profile, profile=profile, session=session)
+    return await crud.Update_Profile(
+        new_profile=new_profile, profile=profile, session=session
+    )
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)

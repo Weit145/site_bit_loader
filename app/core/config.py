@@ -16,10 +16,14 @@ class Setting(BaseSettings):
     db_echo: bool = False
 
     secret_key: str = os.getenv("SECRET_KEY", "default-secret-key")
-    access_token_expire_minutes: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+    access_token_expire_minutes: int = int(
+        os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
+    )
     algorithm: str = os.getenv("ALGORITHM", "HS256")
 
-    pwd_context: ClassVar[CryptContext] = CryptContext(schemes=["argon2"], deprecated="auto")
+    pwd_context: ClassVar[CryptContext] = CryptContext(
+        schemes=["argon2"], deprecated="auto"
+    )
 
 
 settings = Setting()

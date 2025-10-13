@@ -16,14 +16,18 @@ async def User_By_Id_Path(
     user_db = await session.get(User, user_id)
     if user_db is not None:
         return UserResponse.model_validate(user_db)
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found"
+    )
 
 
 async def UserForm_TO_UserCreate(
     user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
     try:
-        user_create = UserCreate(username=user_form.username, password=user_form.password)
+        user_create = UserCreate(
+            username=user_form.username, password=user_form.password
+        )
         return user_create
     except Exception as e:
         raise HTTPException(
@@ -35,7 +39,9 @@ async def UserForm_TO_UserLogin(
     user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
     try:
-        user_create = UserLogin(username=user_form.username, password=user_form.password)
+        user_create = UserLogin(
+            username=user_form.username, password=user_form.password
+        )
         return user_create
     except Exception as e:
         raise HTTPException(

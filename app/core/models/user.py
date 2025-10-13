@@ -19,7 +19,9 @@ class User(Base):
 
     disabled: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    posts: Mapped[list["Post"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    posts: Mapped[list["Post"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
     profile: Mapped["Profile"] = relationship(
         back_populates="user",
