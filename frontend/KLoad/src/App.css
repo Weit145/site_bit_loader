@@ -40,3 +40,47 @@
 .read-the-docs {
   color: #888;
 }
+
+
+.content_box{
+  display: flex;
+  flex-direction:column;
+  box-sizing: border-box;
+
+  position: absolute;
+  width: 95vw;
+  height: 75vh;
+  left: 2.5vw;
+  top: 20vh;
+  background: rgba(240, 248, 255, 0.95);
+  border-radius: 2.5vw;
+  /* border: 5vh solid #000000; */
+
+  backdrop-filter: blur(0.5vh);
+  align-items: center;
+
+
+}
+
+.content_text{
+  /* position: absolute; */
+  width: 50vw;
+  top: 2.5vh;
+
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-size: calc((5vh+5vw)/2);
+  /* identical to box height */
+  text-align: center;
+
+  color: #000000;
+}
+
+.button_box{
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:10vh;
+
+}

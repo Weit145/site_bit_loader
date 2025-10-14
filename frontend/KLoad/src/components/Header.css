@@ -1,0 +1,47 @@
+.menu_option{
+  min-height: 100vh;
+
+  position: absolute;
+  width: 60px;
+  height: 30px;
+  left: 2.5vw;
+  top:-45vh;
+
+}
+
+.menu_box{
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  position: absolute;
+  width: 95vw;
+  height: 10vh;
+  left: 2.5vw;
+  top: 1vh;
+  background: rgba(0, 0, 0, 0.001);
+  border: 0.5vh solid #000000;
+  border-radius: 2.5vw;
+  backdrop-filter: blur(0.5vh);
+  align-items: center;
+
+}
+.menu_text{
+  /* KLoad/Авторизация */
+  
+  position: absolute;
+  width: 50vw;
+  top: calc(50% - 64px/2 + 0.5px);
+
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 32px;
+  /* identical to box height */
+  text-align: center;
+
+  color: #FFFFFF;
+
+
+}
