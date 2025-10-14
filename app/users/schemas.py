@@ -1,12 +1,34 @@
+from typing import Annotated
+
+from annotated_types import MaxLen, MinLen
 from pydantic import BaseModel, ConfigDict
 
+
 class UserBase(BaseModel):
-    usernmae:str
+    username: Annotated[str, MinLen(4), MaxLen(32)]
+
+
+class UserCreate(UserBase):
+    password: Annotated[str, MinLen(6), MaxLen(32)]
+
+
+class UserLogin(UserBase):
+    password: Annotated[str, MinLen(6), MaxLen(32)]
+
+
+class UserGet(UserBase):
     pass
 
-class Create_User(UserBase):
-    pass
 
-class User(UserBase):
-    model_config=ConfigDict(from_attributes=True)
-    id:int
+class UserResponse(UserBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+
+
+class AvtorUser(UserBase):
+    disabled: bool | None = None
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
