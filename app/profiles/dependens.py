@@ -13,7 +13,7 @@ from users.schemas import UserResponse
 from .schemas import ProfileResponse
 
 
-async def profile_by_id(
+async def Profile_By_Id(
     profile_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ProfileResponse:
@@ -58,8 +58,8 @@ async def Add_Img_In_Folder(
     file: UploadFile,
     current_user: Annotated[UserResponse, Depends(Get_Current_User)],
 ) -> Profile:
-    upload = upload_dir()
-    unique_filename = file_extension(file=file, current_user=current_user)
+    upload = Upload_Dir()
+    unique_filename = File_Extension(file=file, current_user=current_user)
     file_path = upload / unique_filename
 
     with open(file_path, "wb") as buffer:
@@ -72,13 +72,13 @@ async def Add_Img_In_Folder(
     )
 
 
-def upload_dir() -> Path_oc:
-    upload_dir = Path_oc("app/uploads")
-    upload_dir.mkdir(exist_ok=True)
-    return upload_dir
+def Upload_Dir() -> Path_oc:
+    Upload_Dir = Path_oc("app/uploads")
+    Upload_Dir.mkdir(exist_ok=True)
+    return Upload_Dir
 
 
-def file_extension(
+def File_Extension(
     file: UploadFile,
     current_user: UserResponse,
 ) -> str:
@@ -86,5 +86,5 @@ def file_extension(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Dont open file"
         )
-    file_extension = Path_oc(file.filename).suffix.lower()
-    return f"{current_user.id}_{int(datetime.now().timestamp())}{file_extension}"
+    Extension = Path_oc(file.filename).suffix.lower()
+    return f"{current_user.id}_{int(datetime.now().timestamp())}{Extension}"

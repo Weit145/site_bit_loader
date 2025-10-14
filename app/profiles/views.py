@@ -31,7 +31,7 @@ async def Reset_All_Profiles_EndPoint(
 
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
-async def Reset_Me_EndPoint(
+async def Reset_My_Profile_EndPoint(
     profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> None:
@@ -39,7 +39,7 @@ async def Reset_Me_EndPoint(
 
 
 @router.get("/me/", response_model=ProfileResponse)
-async def read_profile_me(
+async def Read_My_Profile_EndPoint(
     profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
 ) -> ProfileResponse:
     return ProfileResponse.model_validate(profile)

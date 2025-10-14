@@ -66,9 +66,9 @@ async def Reset_All_Profile(
 
 
 def Clear_Upload_dir() -> None:
-    upload_dir = Path("app/uploads")
+    Upload_Dir = Path("app/uploads")
     try:
-        for item in upload_dir.iterdir():
+        for item in Upload_Dir.iterdir():
             if item.is_file() and item.name != "default.png":
                 item.unlink()
     except Exception as e:
@@ -107,7 +107,7 @@ async def Redact_Profiledb_to_Default(
 
 
 def Delete_Uploaded_File(filename: str) -> bool | None:
-    upload_dir = Path("app/uploads")
-    file_path = upload_dir / filename
+    Upload_Dir = Path("app/uploads")
+    file_path = Upload_Dir / filename
     if file_path.exists() and file_path.is_file() and filename != "default.png":
         file_path.unlink()
