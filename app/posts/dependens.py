@@ -1,13 +1,13 @@
 from typing import Annotated
 
-from core.models import Post, db_helper
+from app.core.models import Post, db_helper
 from fastapi import Depends, HTTPException, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.dependens import Get_Current_User
-from users.schemas import UserResponse
+from app.users.dependens import get_current_user
+from app.users.schemas import UserResponse
 
 
-async def Postdb_By_Id(
+async def postdb_by_id(
     post_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> Post:
@@ -19,9 +19,9 @@ async def Postdb_By_Id(
     )
 
 
-def Check_Post_And_User_Correct(
-    post_to_redact: Annotated[Post, Depends(Postdb_By_Id)],
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+def check_post_and_user_correct(
+    post_to_redact: Annotated[Post, Depends(postdb_by_id)],
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> Post:
     if (not post_to_redact) or (post_to_redact.user_id != current_user.id):
         raise HTTPException(

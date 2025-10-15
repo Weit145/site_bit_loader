@@ -1,15 +1,15 @@
 from typing import Annotated
 
-from core.models import User, db_helper
+from app.core.models import User, db_helper
 from fastapi import Depends, HTTPException, Path, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud, token
-from .schemas import UserCreate, UserLogin, UserResponse
+from app.users import crud, token
+from app.users.schemas import UserCreate, UserLogin, UserResponse
 
 
-async def User_By_Id_Path(
+async def user_by_id_path(
     user_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> UserResponse:
@@ -21,7 +21,7 @@ async def User_By_Id_Path(
     )
 
 
-async def UserForm_TO_UserCreate(
+async def user_form_to_user_create(
     user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
     try:
@@ -35,7 +35,7 @@ async def UserForm_TO_UserCreate(
         ) from None
 
 
-async def UserForm_TO_UserLogin(
+async def user_form_to_user_login(
     user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
     try:
@@ -49,10 +49,10 @@ async def UserForm_TO_UserLogin(
         ) from None
 
 
-async def Get_Current_User(
-    username: Annotated[str, Depends(token.Decode_Jwt)],
+async def get_current_user(
+    username: Annotated[str, Depends(token.decode_jwt)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> UserResponse:
-    user_db = await crud.Get_User(session=session, username=username)
-    token.Check_User_Log(user_db)
+    user_db = await crud.get_user(session=session, username=username)
+    token.check_user_log(user_db)
     return UserResponse.model_validate(user_db)
