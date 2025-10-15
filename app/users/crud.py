@@ -10,17 +10,17 @@ from .schemas import UserCreate, UserLogin, UserResponse
 # Создание User
 
 
-async def Create_User(session: AsyncSession, user_create: UserCreate) -> UserResponse:
-    user_db = await Get_User(session=session, username=user_create.username)
-    Check_User_Regist(user_db)
-    use_and_password = Add_Password_Userdb(user_create)
+async def create_user(session: AsyncSession, user_create: UserCreate) -> UserResponse:
+    user_db = await get_user(session=session, username=user_create.username)
+    check_user_regist(user_db)
+    use_and_password = add_password_userdb(user_create)
     session.add(use_and_password)
     await session.commit()
     await session.refresh(use_and_password)
     return UserResponse.model_validate(use_and_password)
 
 
-def Check_User_Regist(
+def check_user_regist(
     user_db: User | None,
 ) -> None:
     if user_db is not None:
@@ -30,29 +30,29 @@ def Check_User_Regist(
         )
 
 
-def Add_Password_Userdb(user_create: UserCreate) -> User:
-    hashed_password = Get_Password_Hash(user_create.password)
+def add_password_userdb(user_create: UserCreate) -> User:
+    hashed_password = get_password_hash(user_create.password)
     user_data = user_create.model_dump()
     user_data["password"] = hashed_password
     user_db = User(**user_data)
     return user_db
 
 
-def Get_Password_Hash(password) -> str:
+def get_password_hash(password) -> str:
     return settings.pwd_context.hash(password)
 
 
 # Удаление UserMe
 
 
-async def Delete_User(session: AsyncSession, user_id: int) -> None:
+async def delete_user(session: AsyncSession, user_id: int) -> None:
     user_db = await session.get(User, user_id)
-    Check_User(user_db)
+    check_user(user_db)
     await session.delete(user_db)
     await session.commit()
 
 
-def Check_User(
+def check_user(
     user_db: User | None,
 ) -> None:
     if not user_db:
@@ -64,7 +64,7 @@ def Check_User(
 # Удаление все (ВООБЩЕ ВСЕГО)
 
 
-async def Delete_All_Users(session: AsyncSession) -> None:
+async def delete_all_users(session: AsyncSession) -> None:
     stmt = select(User).order_by(User.id)
     result: Result = await session.execute(stmt)
     users = result.scalars().all()
@@ -76,20 +76,20 @@ async def Delete_All_Users(session: AsyncSession) -> None:
 # Вход в акаунт
 
 
-async def Authenticate_User(
+async def authenticate_user(
     session: AsyncSession,
     user: UserLogin,
 ) -> UserResponse:
-    user_db = await Get_User(session=session, username=user.username)
-    Check_Userdb_And_Password(user_db=user_db, password=user.password)
+    user_db = await get_user(session=session, username=user.username)
+    check_userdb_and_password(user_db=user_db, password=user.password)
     return UserResponse.model_validate(user_db)
 
 
-def Check_Userdb_And_Password(
+def check_userdb_and_password(
     user_db: User | None,
     password: str,
 ) -> None:
-    if (not user_db) or (not Verify_Password(password, user_db.password)):
+    if (not user_db) or (not verify_password(password, user_db.password)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -97,11 +97,11 @@ def Check_Userdb_And_Password(
         )
 
 
-def Verify_Password(plain_password, hashed_password) -> bool:
+def verify_password(plain_password, hashed_password) -> bool:
     return settings.pwd_context.verify(plain_password, hashed_password)
 
 
-async def Get_User(session: AsyncSession, username: str) -> User | None:
+async def get_user(session: AsyncSession, username: str) -> User | None:
     stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
     user_db = result.scalar_one_or_none()
