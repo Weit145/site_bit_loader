@@ -1,10 +1,10 @@
 from typing import Annotated
 
-from core.models import Post, db_helper
+from app.core.models import Post, db_helper
 from fastapi import Depends, HTTPException, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.dependens import get_current_user
-from users.schemas import UserResponse
+from app.users.dependens import get_current_user
+from app.users.schemas import UserResponse
 
 
 async def postdb_by_id(

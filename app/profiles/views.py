@@ -1,13 +1,13 @@
 from typing import Annotated
 
-from core.models.db_hellper import db_helper
-from core.models.profile import Profile
+from app.core.models.db_hellper import db_helper
+from app.core.models.profile import Profile
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud
-from .dependens import add_img_in_folder, profiledb_by_userid
-from .schemas import ProfileResponse
+from app.profiles import crud
+from app.profiles.dependens import add_img_in_folder, profiledb_by_userid
+from app.profiles.schemas import ProfileResponse
 
 router = APIRouter(prefix="/profile", tags=["Profile"])
 

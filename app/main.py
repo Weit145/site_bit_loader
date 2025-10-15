@@ -1,10 +1,22 @@
 import uvicorn
 from fastapi import FastAPI
-from posts.views import router as posts_router
-from profiles.views import router as profile_router
-from users.views import router as users_router
+
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.posts.views import router as posts_router
+from app.profiles.views import router as profile_router
+from app.users.views import router as users_router
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], 
+    allow_credentials=True,                   
+    allow_methods=["*"],                     
+    allow_headers=["*"],         
+)
+
 app.include_router(users_router, tags=["Users"])
 app.include_router(posts_router, tags=["Posts"])
 app.include_router(profile_router, tags=["Profile"])
