@@ -2,6 +2,7 @@
     height: 5vh;
     width: 25vw;
     background-color: aqua;
+    border-radius: 5;
     color:rgb(0, 0, 0);
     font-family: 'Press Start 2P';
     text-align: center;
@@ -9,7 +10,11 @@
 
 
 }
-.Button:hover{
+.Button:disabled{
+    background-color: darkslategrey;
+
+}
+.Button:active{
     color: aliceblue;
     background-color: rgb(88, 88, 243);
 
