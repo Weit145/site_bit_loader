@@ -1,7 +1,7 @@
 from app.core.config import settings
 from app.core.models import User
 from fastapi import HTTPException, status
-from sqlalchemy import select, delete
+from sqlalchemy import select, Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.users.schemas import UserCreate, UserLogin, UserResponse
@@ -64,7 +64,11 @@ def check_user(
 
 
 async def delete_all_users(session: AsyncSession) -> None:
-    await session.execute(delete(User))
+    stmt = select(User).order_by(User.id)
+    result: Result = await session.execute(stmt)
+    users = result.scalars().all()
+    for user in users:
+        await session.delete(user)
     await session.commit()
 
 

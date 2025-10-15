@@ -22,6 +22,12 @@ async def update_profile_end_point(
         new_profile=new_profile, profile=profile, session=session
     )
 
+@router.delete("/delete_all/", status_code=status.HTTP_204_NO_CONTENT)
+async def reset_all_profiles_end_point(
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+) -> None:
+    return await crud.delete_all_profile(session=session)
+
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 async def reset_all_profiles_end_point(
