@@ -111,3 +111,14 @@ def delete_uploaded_file(filename: str) -> bool | None:
     file_path = upload_dir / filename
     if file_path.exists() and file_path.is_file() and filename != "default.png":
         file_path.unlink()
+
+
+# Удаления всех провилей
+
+async def delete_all_profile(session: AsyncSession) -> None:
+    stmt = select(Profile).order_by(Profile.id)
+    result: Result = await session.execute(stmt)
+    profiles = result.scalars().all()
+    for profile in profiles:
+        await session.delete(profile)
+    await session.commit()
