@@ -10,11 +10,6 @@ BASE_DIR = Path(__file__).parent.parent
 
 load_dotenv()
 
-<<<<<<< HEAD
-BASE_DIR=Path(__file__).parent.parent``
-=======
->>>>>>> origin/main
-
 class Setting(BaseSettings):
     db_url: str = f"sqlite+aiosqlite:///{BASE_DIR}/db.sqlite3"
     db_echo: bool = False

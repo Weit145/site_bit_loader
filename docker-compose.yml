@@ -9,3 +9,16 @@ services:
     volumes:
       - .:/app
     command: poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend/KLoad
+      dockerfile: Dockerfile.frontend
+    container_name: site_frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    volumes:
+      - ./frontend/KLoad:/app
