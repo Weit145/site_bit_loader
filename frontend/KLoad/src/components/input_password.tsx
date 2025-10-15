@@ -2,7 +2,7 @@
 import './input_password.css'
 import '../App.css'
 
-export default function Input_password({children, password, setPassword}: {children:string, password:any, setPassword:any}){
+export default function Input_password({children, password, setPassword, name}: {children:string, password:any, setPassword:any, name:string}){
     let test:string
     if (password=='1'){
         test='good'
@@ -16,12 +16,11 @@ export default function Input_password({children, password, setPassword}: {child
     }
 
     return(
-        <form className='form_area'>
+        
             <label htmlFor='form_row'>
                 <span className='input_text'>{children}</span>
-                <input type="password" id='password_input' value={password} onChange={handlePasswordChange} className={password=='2' ? "input_area" : "input_area_incorrect"}/>
+                <input type="password" id='password_input' value={password} name={name} onChange={handlePasswordChange} className={password=='2' ? "input_area" : "input_area_incorrect"}/>
                 <span className='input_text'>{test}</span>
             </label>
-        </form>
     )
 }

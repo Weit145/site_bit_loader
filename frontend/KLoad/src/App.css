@@ -84,3 +84,15 @@
   margin-top:10vh;
 
 }
+.form_area{
+    display: flex;
+    flex-direction: column;
+    width: var(--form-width);
+    max-width: var(--form-max-width);
+    gap: var(--row-gap);
+    box-sizing: border-box;
+    align-items: stretch;
+    margin-top: 1vh;
+    /* position: static; */
+    /* margin-right: 10vw; */
+}
