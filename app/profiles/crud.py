@@ -1,13 +1,13 @@
 from pathlib import Path
 from typing import Annotated
 
-from core.models import Profile
+from app.core.models import Profile
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.schemas import UserResponse
+from app.users.schemas import UserResponse
 
-from .schemas import ProfileResponse
+from app.profiles.schemas import ProfileResponse
 
 # Создание профеля испотлбзуеться user/views.py
 
@@ -92,7 +92,7 @@ async def reset_profile(session: AsyncSession, profile: Profile) -> ProfileRespo
 
 
 def check_no_reset_profiledb(profile: Profile) -> None:
-    if not profile or profile.name_img == "default":
+    if not profile or profile.name_img == "default.png":
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
 
 

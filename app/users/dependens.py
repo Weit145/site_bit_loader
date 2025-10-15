@@ -1,12 +1,12 @@
 from typing import Annotated
 
-from core.models import User, db_helper
+from app.core.models import User, db_helper
 from fastapi import Depends, HTTPException, Path, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud, token
-from .schemas import UserCreate, UserLogin, UserResponse
+from app.users import crud, token
+from app.users.schemas import UserCreate, UserLogin, UserResponse
 
 
 async def user_by_id_path(

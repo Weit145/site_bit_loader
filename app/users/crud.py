@@ -1,11 +1,10 @@
-from core.config import settings
-from core.models import User
+from app.core.config import settings
+from app.core.models import User
 from fastapi import HTTPException, status
-from sqlalchemy import select
-from sqlalchemy.engine import Result
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import UserCreate, UserLogin, UserResponse
+from app.users.schemas import UserCreate, UserLogin, UserResponse
 
 # Создание User
 
@@ -13,11 +12,11 @@ from .schemas import UserCreate, UserLogin, UserResponse
 async def create_user(session: AsyncSession, user_create: UserCreate) -> UserResponse:
     user_db = await get_user(session=session, username=user_create.username)
     check_user_regist(user_db)
-    use_and_password = add_password_userdb(user_create)
-    session.add(use_and_password)
+    user_with_hash = add_password_userdb(user_create)
+    session.add(user_with_hash)
     await session.commit()
-    await session.refresh(use_and_password)
-    return UserResponse.model_validate(use_and_password)
+    await session.refresh(user_with_hash)
+    return UserResponse.model_validate(user_with_hash)
 
 
 def check_user_regist(
@@ -65,11 +64,7 @@ def check_user(
 
 
 async def delete_all_users(session: AsyncSession) -> None:
-    stmt = select(User).order_by(User.id)
-    result: Result = await session.execute(stmt)
-    users = result.scalars().all()
-    for user in users:
-        await session.delete(user)
+    await session.execute(delete(User))
     await session.commit()
 
 

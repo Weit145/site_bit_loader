@@ -1,15 +1,15 @@
 from typing import Annotated
 
-from core.models.db_hellper import db_helper
-from core.models.post import Post
+from app.core.models.db_hellper import db_helper
+from app.core.models.post import Post
 from fastapi import APIRouter, Depends, Form, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.dependens import get_current_user
-from users.schemas import UserResponse
+from app.users.dependens import get_current_user
+from app.users.schemas import UserResponse
 
-from . import crud
-from .dependens import check_post_and_user_correct, postdb_by_id
-from .schemas import CreatePost, OutPost, UpdatePost
+from app.posts import crud
+from app.posts.dependens import check_post_and_user_correct, postdb_by_id
+from app.posts.schemas import CreatePost, OutPost, UpdatePost
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 

@@ -3,17 +3,17 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models.db_hellper import db_helper
-from profiles.crud import clear_upload_dir, create_profile
+from app.core.models.db_hellper import db_helper
+from app.profiles.crud import clear_upload_dir, create_profile
 
-from .dependens import (
+from app.users.dependens import (
     user_form_to_user_create,
     get_current_user,
     user_form_to_user_login,
     user_by_id_path,
 )
-from . import crud, token
-from .schemas import (
+from app.users import crud, token
+from app.users.schemas import (
     Token,
     UserCreate,
     UserGet,
