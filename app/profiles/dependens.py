@@ -3,14 +3,14 @@ from datetime import datetime
 from pathlib import Path as Path_oc
 from typing import Annotated
 
-from core.models import Profile, db_helper
+from app.core.models import Profile, db_helper
 from fastapi import Depends, HTTPException, Path, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.dependens import Get_Current_User
-from users.schemas import UserResponse
+from app.users.dependens import get_current_user
+from app.users.schemas import UserResponse
 
-from .schemas import ProfileResponse
+from app.profiles.schemas import ProfileResponse
 
 
 async def profile_by_id(
@@ -25,22 +25,8 @@ async def profile_by_id(
     )
 
 
-async def Check_File(
-    file: UploadFile,
-) -> UploadFile:
-    if (
-        not file.content_type
-        or not file.content_type.startswith("image/")
-        or file.filename is None
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file"
-        )
-    return file
-
-
-async def Profiledb_By_UserId(
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+async def profiledb_by_userid(
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> Profile:
     stmt = select(Profile).where(Profile.user_id == current_user.id)
@@ -53,10 +39,22 @@ async def Profiledb_By_UserId(
         )
     return profile
 
-
-async def Add_Img_In_Folder(
+async def check_file(
     file: UploadFile,
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+) -> UploadFile:
+    if (
+        not file.content_type
+        or not file.content_type.startswith("image/")
+        or file.filename is None
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file"
+        )
+    return file
+
+async def add_img_in_folder(
+    file: Annotated[UploadFile, Depends(check_file)],
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> Profile:
     upload = upload_dir()
     unique_filename = file_extension(file=file, current_user=current_user)
@@ -86,5 +84,5 @@ def file_extension(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Dont open file"
         )
-    file_extension = Path_oc(file.filename).suffix.lower()
-    return f"{current_user.id}_{int(datetime.now().timestamp())}{file_extension}"
+    Extension = Path_oc(file.filename).suffix.lower()
+    return f"{current_user.id}_{int(datetime.now().timestamp())}{Extension}"

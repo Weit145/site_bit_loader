@@ -1,45 +1,45 @@
 from typing import Annotated
 
-from core.models.db_hellper import db_helper
-from core.models.profile import Profile
+from app.core.models.db_hellper import db_helper
+from app.core.models.profile import Profile
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import crud
-from .dependens import Add_Img_In_Folder, Profiledb_By_UserId
-from .schemas import ProfileResponse
+from app.profiles import crud
+from app.profiles.dependens import add_img_in_folder, profiledb_by_userid
+from app.profiles.schemas import ProfileResponse
 
 router = APIRouter(prefix="/profile", tags=["Profile"])
 
 
 @router.put("/me/", response_model=ProfileResponse)
-async def Update_Profile_EndPoint(
-    new_profile: Annotated[Profile, Depends(Add_Img_In_Folder)],
-    profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
+async def update_profile_end_point(
+    new_profile: Annotated[Profile, Depends(add_img_in_folder)],
+    profile: Annotated[Profile, Depends(profiledb_by_userid)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> ProfileResponse:
-    return await crud.Update_Profile(
+    return await crud.update_profile(
         new_profile=new_profile, profile=profile, session=session
     )
 
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-async def Reset_All_Profiles_EndPoint(
+async def reset_all_profiles_end_point(
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> None:
-    return await crud.Reset_All_Profile(session=session)
+    return await crud.reset_all_profile(session=session)
 
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
-async def Reset_Me_EndPoint(
-    profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
+async def reset_me_end_point(
+    profile: Annotated[Profile, Depends(profiledb_by_userid)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> None:
-    await crud.Reset_Profile(session=session, profile=profile)
+    await crud.reset_profile(session=session, profile=profile)
 
 
 @router.get("/me/", response_model=ProfileResponse)
-async def read_profile_me(
-    profile: Annotated[Profile, Depends(Profiledb_By_UserId)],
+async def read_me_profile_end_point(
+    profile: Annotated[Profile, Depends(profiledb_by_userid)],
 ) -> ProfileResponse:
     return ProfileResponse.model_validate(profile)
