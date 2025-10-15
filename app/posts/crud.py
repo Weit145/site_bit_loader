@@ -8,20 +8,20 @@ from .schemas import CreatePost, OutPost, UpdatePost
 # Срздания поста
 
 
-async def Create_Post(
+async def create_post(
     session: AsyncSession, post_create: CreatePost, user_id: int
 ) -> OutPost:
     post_db = Post(title=post_create.title, body=post_create.body, user_id=user_id)
     session.add(post_db)
     await session.commit()
     await session.refresh(post_db)
-    return Postdb_To_PostOut(post_db=post_db)
+    return postdb_to_post_out(post_db=post_db)
 
 
 # Удаление всех постов
 
 
-async def Dellete_All_Posts(session: AsyncSession) -> None:
+async def dellete_all_posts(session: AsyncSession) -> None:
     stm = select(Post).order_by(Post.id)
     result: Result = await session.execute(stm)
     posts = result.scalars().all()
@@ -33,7 +33,7 @@ async def Dellete_All_Posts(session: AsyncSession) -> None:
 # Удаление по Id поста
 
 
-async def Delete_Postdb_By_Id(
+async def delete_postdb_by_id(
     session: AsyncSession, post_db: Post, username: str
 ) -> None:
     if post_db.user.username != username:
@@ -47,24 +47,24 @@ async def Delete_Postdb_By_Id(
 # Выввод всех постов
 
 
-async def Get_All_Posts(session: AsyncSession) -> list[OutPost]:
+async def get_all_posts(session: AsyncSession) -> list[OutPost]:
     stm = select(Post).order_by(Post.id)
     result: Result = await session.execute(stm)
     posts_db = list(result.scalars().all())
-    return Postdb_to_PostOut_list(posts_db=posts_db)
+    return postdb_to_post_out_list(posts_db=posts_db)
 
 
-def Postdb_to_PostOut_list(
+def postdb_to_post_out_list(
     posts_db: list[Post],
 ) -> list[OutPost]:
     new_posts: list[OutPost] = []
     for post in posts_db:
-        out_post = Postdb_To_PostOut(post)
+        out_post = postdb_to_post_out(post)
         new_posts.append(out_post)
     return new_posts
 
 
-def Postdb_To_PostOut(post_db: Post | None) -> OutPost:
+def postdb_to_post_out(post_db: Post | None) -> OutPost:
     if not post_db:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Post not found"
@@ -81,24 +81,24 @@ def Postdb_To_PostOut(post_db: Post | None) -> OutPost:
 # Обновление поста по Id поста
 
 
-async def Update_Post(
+async def update_post(
     session: AsyncSession,
     post: UpdatePost,
     post_to_redact: Post,
 ) -> OutPost:
-    await Redact_Postdb(
+    await redact_postdb(
         session=session,
         post_to_redact=post_to_redact,
         post=post,
     )
-    post_db = await Update_Postdb(
+    post_db = await update_postdb(
         session=session,
         post_to_redact=post_to_redact,
     )
-    return Postdb_To_PostOut(post_db=post_db)
+    return postdb_to_post_out(post_db=post_db)
 
 
-async def Redact_Postdb(
+async def redact_postdb(
     session: AsyncSession,
     post_to_redact: Post,
     post: UpdatePost,
@@ -112,7 +112,7 @@ async def Redact_Postdb(
     await session.commit()
 
 
-async def Update_Postdb(
+async def update_postdb(
     session: AsyncSession,
     post_to_redact: Post,
 ) -> Post:

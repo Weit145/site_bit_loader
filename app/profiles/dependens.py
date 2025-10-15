@@ -7,13 +7,13 @@ from core.models import Profile, db_helper
 from fastapi import Depends, HTTPException, Path, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from users.dependens import Get_Current_User
+from users.dependens import get_current_user
 from users.schemas import UserResponse
 
 from .schemas import ProfileResponse
 
 
-async def Profile_By_Id(
+async def profile_by_id(
     profile_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ProfileResponse:
@@ -25,22 +25,8 @@ async def Profile_By_Id(
     )
 
 
-async def Check_File(
-    file: UploadFile,
-) -> UploadFile:
-    if (
-        not file.content_type
-        or not file.content_type.startswith("image/")
-        or file.filename is None
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file"
-        )
-    return file
-
-
-async def Profiledb_By_UserId(
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+async def profiledb_by_userid(
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> Profile:
     stmt = select(Profile).where(Profile.user_id == current_user.id)
@@ -53,13 +39,25 @@ async def Profiledb_By_UserId(
         )
     return profile
 
-
-async def Add_Img_In_Folder(
+async def check_file(
     file: UploadFile,
-    current_user: Annotated[UserResponse, Depends(Get_Current_User)],
+) -> UploadFile:
+    if (
+        not file.content_type
+        or not file.content_type.startswith("image/")
+        or file.filename is None
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file"
+        )
+    return file
+
+async def add_img_in_folder(
+    file: Annotated[UploadFile, Depends(check_file)],
+    current_user: Annotated[UserResponse, Depends(get_current_user)],
 ) -> Profile:
-    upload = Upload_Dir()
-    unique_filename = File_Extension(file=file, current_user=current_user)
+    upload = upload_dir()
+    unique_filename = file_extension(file=file, current_user=current_user)
     file_path = upload / unique_filename
 
     with open(file_path, "wb") as buffer:
@@ -72,13 +70,13 @@ async def Add_Img_In_Folder(
     )
 
 
-def Upload_Dir() -> Path_oc:
-    Upload_Dir = Path_oc("app/uploads")
-    Upload_Dir.mkdir(exist_ok=True)
-    return Upload_Dir
+def upload_dir() -> Path_oc:
+    upload_dir = Path_oc("app/uploads")
+    upload_dir.mkdir(exist_ok=True)
+    return upload_dir
 
 
-def File_Extension(
+def file_extension(
     file: UploadFile,
     current_user: UserResponse,
 ) -> str:

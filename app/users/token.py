@@ -10,7 +10,7 @@ from jwt.exceptions import InvalidTokenError
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 
-def Create_Access_Token(data: dict) -> str:
+def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expires_delta = timedelta(minutes=settings.access_token_expire_minutes)
     expire = datetime.now(UTC) + expires_delta
@@ -20,20 +20,20 @@ def Create_Access_Token(data: dict) -> str:
     )
     return encoded_jwt
 
-async def Decode_Jwt(
+async def decode_jwt(
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
     try:
         username = jwt.decode(
             token, settings.secret_key, algorithms=[settings.algorithm]
         ).get("sub")
-        Check_User_Log(username)
+        check_user_log(username)
         return username
     except InvalidTokenError:
-        Check_User_Log(None)
+        check_user_log(None)
 
 
-def Check_User_Log(
+def check_user_log(
     user_db: Any,
 ) -> None:
     if not user_db:
