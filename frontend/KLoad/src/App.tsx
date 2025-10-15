@@ -22,6 +22,7 @@ function App() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const params = new URLSearchParams({
+      grant_type:"password",
       username : name,
       password : password,
       scope:"",
@@ -29,19 +30,16 @@ function App() {
       client_secret:"",
     })
     try{
+      
       const response = await axios.post(
-          "http://127.0.0.1:8000/users/",
-          {
-            name,
-            password,
-            scope: "",
-            client_id: "",
-            client_secret: "",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-        );
+        "http://127.0.0.1:8000/users/",
+        params,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
         console.log("Ответ сервера:", response.data);
       } catch (error: any) {
         console.error("Ошибка при отправке данных:", error);
