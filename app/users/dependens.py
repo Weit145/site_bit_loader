@@ -3,10 +3,31 @@ from typing import Annotated
 from app.core.models import User, db_helper
 from fastapi import Depends, HTTPException, Path, status
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.users import crud, token
 from app.users.schemas import UserCreate, UserLogin, UserResponse
+
+
+async def check_user_regist(
+    user: UserCreate,
+    session: AsyncSession
+) -> UserCreate:
+    user_db = await get_user(session=session,username=user.username)
+    if user_db is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered",
+        )
+    return user
+    
+async def get_user(session: AsyncSession, username: str) -> User | None:
+    stmt = select(User).where(User.username == username)
+    result = await session.execute(stmt)
+    user_db = result.scalar_one_or_none()
+    return user_db
+
 
 
 async def user_by_id_path(
@@ -19,21 +40,6 @@ async def user_by_id_path(
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found"
     )
-
-
-async def user_form_to_user_create(
-    user_form: Annotated[OAuth2PasswordRequestForm, Depends()],
-):
-    try:
-        user_create = UserCreate(
-            username=user_form.username, password=user_form.password
-        )
-        return user_create
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Validation error"
-        ) from None
-
 
 async def user_form_to_user_login(
     user_form: Annotated[OAuth2PasswordRequestForm, Depends()],

@@ -10,23 +10,12 @@ from app.users.schemas import UserCreate, UserLogin, UserResponse
 
 
 async def create_user(session: AsyncSession, user_create: UserCreate) -> UserResponse:
-    user_db = await get_user(session=session, username=user_create.username)
-    check_user_regist(user_db)
     user_with_hash = add_password_userdb(user_create)
     session.add(user_with_hash)
     await session.commit()
     await session.refresh(user_with_hash)
     return UserResponse.model_validate(user_with_hash)
 
-
-def check_user_regist(
-    user_db: User | None,
-) -> None:
-    if user_db is not None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered",
-        )
 
 
 def add_password_userdb(user_create: UserCreate) -> User:
