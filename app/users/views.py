@@ -1,13 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
 from app.profiles.crud import clear_upload_dir, create_profile
 
 from app.users.dependens import (
-    user_form_to_user_create,
+    check_user_regist,
     get_current_user,
     user_form_to_user_login,
     user_by_id_path,
@@ -26,7 +26,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post("/", response_model=Token)
 async def create_user_end_point(
-    user_create: Annotated[UserCreate, Depends(user_form_to_user_create)],
+    user_create: Annotated[UserCreate, Form()],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> Token:
     user = await crud.create_user(session=session, user_create=user_create)
