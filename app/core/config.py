@@ -18,11 +18,13 @@ class Setting(BaseSettings):
     access_token_expire_minutes: int = int(
         os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
     )
-    algorithm: str = os.getenv("ALGORITHM", "HS256")
+    algorithm: str = os.getenv("ALGORITHM")
 
     pwd_context: ClassVar[CryptContext] = CryptContext(
         schemes=["argon2"], deprecated="auto"
     )
+    
+    broker:str = os.getenv("CELERY_BROKER")
 
 
 settings = Setting()

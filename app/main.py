@@ -25,3 +25,4 @@ if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
 
     # poetry run python app/main.py
+    # docker compose up --build
