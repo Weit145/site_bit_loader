@@ -24,6 +24,16 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
+  celery:
+    build: .
+    container_name: celery
+    command: poetry run celery -A app.tasks.celery.app worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+    restart: always
+    
   frontend:
     build:
       context: ./frontend/KLoad
