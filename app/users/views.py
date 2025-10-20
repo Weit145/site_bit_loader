@@ -21,7 +21,7 @@ from app.users.schemas import (
     UserResponse,
 )
 
-from app.tasks.send_email import send_message
+from app.tasks.tasks import send_message
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
