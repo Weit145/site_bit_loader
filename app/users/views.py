@@ -21,6 +21,8 @@ from app.users.schemas import (
     UserResponse,
 )
 
+from app.tasks.send_email import send_message
+
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
@@ -52,6 +54,7 @@ async def delete_all_users_end_point(
 ) -> None:
     await crud.delete_all_users(session=session)
     clear_upload_dir()
+    send_message.delay()
 
 
 @router.post("/token/", response_model=Token)
