@@ -1,4 +1,30 @@
-import axios from "axios";
+React start project: npm run dev
+
+
+
+<form action="http://localhost:8000" method='POST'>
+              <Input_name name={"name"} value={name} setName={setName}>Имя</Input_name>
+              <Input_password password={password} name={"password"} setPassword={setPassword}>Пароль</Input_password>
+              <Input_password_pod password={password_pod} setPassword={setPassword_pod}>Подтвердите пароль</Input_password_pod>
+              {/* <input type='submit' disabled={false} className="Button" accessKey='enter'/> */}
+              <Button onClick={()=> Button_click('a')} type={'submit'}>Подтверждение</Button>
+
+              {/* <input type='reset'/> */}
+          </form>
+          <div className='button_box'>
+            <Search></Search>
+            <Button onClick={()=> Button_click('b')} type={'button'}>Авторизоваться</Button>
+          </div>
+
+
+
+
+
+
+
+
+
+          import axios from "axios";
 
 import React, { useState } from "react";
 import "./App.css";
@@ -22,7 +48,6 @@ function App() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const params = new URLSearchParams({
-      grant_type:"password",
       username : name,
       password : password,
       scope:"",
@@ -30,16 +55,19 @@ function App() {
       client_secret:"",
     })
     try{
-      
       const response = await axios.post(
-        "http://127.0.0.1:8000/users/",
-        params,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+          "http://127.0.0.1:8000/users/",
+          {
+            name,
+            password,
+            scope: "",
+            client_id: "",
+            client_secret: "",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
         console.log("Ответ сервера:", response.data);
       } catch (error: any) {
         console.error("Ошибка при отправке данных:", error);

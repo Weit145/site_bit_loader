@@ -1,12 +1,17 @@
 .Button{
     height: 5vh;
     width: 25vw;
+    margin-top: 1.5vh;
     background-color: aqua;
+    border-style: dashed;
+    border-color:black;
+    border-width: 0.3vh;
     border-radius: 5;
-    color:rgb(0, 0, 0);
+    color:black;
     font-family: 'Press Start 2P';
     text-align: center;
-    margin-bottom: 2.5vh;
+    margin-bottom: 1.5vh;
+
 
 
 }
@@ -16,6 +21,11 @@
 }
 .Button:active{
     color: aliceblue;
-    background-color: rgb(88, 88, 243);
 
+}
+.Button:hover{
+    cursor: pointer;
+    background-color:rgb(0, 255, 179);
+    border-color: black;
+    
 }

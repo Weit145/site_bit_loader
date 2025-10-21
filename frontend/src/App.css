@@ -49,9 +49,9 @@
 
   position: absolute;
   width: 95vw;
-  height: 75vh;
+  height: 80vh;
   left: 2.5vw;
-  top: 20vh;
+  top: 15vh;
   background: rgba(240, 248, 255, 0.95);
   border-radius: 2.5vw;
   /* border: 5vh solid #000000; */
@@ -81,7 +81,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top:10vh;
+  margin-top:2vh;
 
 }
 .form_area{

@@ -1,1 +1,0 @@
-React start project: npm run dev
