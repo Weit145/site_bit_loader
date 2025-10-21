@@ -12,7 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
     background-image:
-    url("/home/mifugi/site_bit_loader/frontend/src/assets/kletka.svg"); /* Если файл в src/assets/ */
+    url("assets/kletka.svg"); /* Если файл в src/assets/ */
   
   background-size: 10vw;
   background-blend-mode: soft-light;
