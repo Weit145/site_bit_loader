@@ -11,6 +11,17 @@ services:
     volumes:
       - .:/app
     command: poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  celery:
+    build: .
+    container_name: celery
+    command: poetry run celery -A app.tasks.celery.app worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+    restart: always
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     hostname: rabbitmq
@@ -23,16 +34,6 @@ services:
       RABBITMQ_DEFAULT_PASS: "guest"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
-
-  celery:
-    build: .
-    container_name: celery
-    command: poetry run celery -A app.tasks.celery.app worker --loglevel=info
-    volumes:
-      - .:/app
-    depends_on:
-      - rabbitmq
-    restart: always
     
   frontend:
     build:
