@@ -57,6 +57,15 @@
 
   color: #000000;
 }
+.error_message{
+
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-size: calc(100vh+100px);
+
+
+  color: #970000;
+}
 
 .form_row{
     display: flex;
