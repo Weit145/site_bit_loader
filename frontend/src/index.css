@@ -12,7 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
     background-image:
-    url("/home/mifugi/site_bit_loader/frontend/KLoad/src/assets/kletka.svg"); /* Если файл в src/assets/ */
+    url("/home/mifugi/site_bit_loader/frontend/src/assets/kletka.svg"); /* Если файл в src/assets/ */
   
   background-size: 10vw;
   background-blend-mode: soft-light;
@@ -72,23 +72,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
-
-.patterns {
-  position: absolute;
-  /* top:0;
-  left: 0;
-  min-height: 100%;
-  min-width: 100%; */
-
-    /* Чтобы фон занимал всю высоту окна */
-  /* background-image: url('/background.svg'); Если файл в public/ */
-  /* или */
-  background-image:
-    url("/home/mifugi/site_bit_loader/frontend/KLoad/src/assets/kletka.svg"); /* Если файл в src/assets/ */
-  
-  background-size: 10vw;
-  background-blend-mode: soft-light;
-  background-repeat: repeat;
-  background-position: center; /* Выровнять по центру */
 }
