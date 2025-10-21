@@ -49,7 +49,7 @@
 
   position: absolute;
   width: 95vw;
-  height: 80vh;
+  height: 82.5vh;
   left: 2.5vw;
   top: 15vh;
   background: rgba(240, 248, 255, 0.95);
@@ -81,7 +81,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top:2vh;
+  margin-top:1.5vh;
 
 }
 .form_area{

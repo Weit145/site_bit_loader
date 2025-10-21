@@ -1,11 +1,21 @@
 .menu_option{
-  min-height: 100vh;
+
+  position: absolute;
+  width: 60px;
+  height: 30px;
+  left: 2.5vw;
+  top:35%;
+
+}
+.menu_option_button{
 
   position: absolute;
   width: 60px;
   height: 30px;
   left: 2.5vw;
   top:-45vh;
+  border-color: #00000000;
+  color: #00000000;
 
 }
 
@@ -44,4 +54,31 @@
   color: #FFFFFF;
 
 
+
+  
+}
+.menu_text_button {
+  position: absolute;
+  font-family: 'Press Start 2P';
+  margin-top:2.5%;
+  font-size: 28px;
+  line-height: 32px;
+  color: #FFFFFF;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  user-select: none;
+}
+
+/* Эффекты при наведении / нажатии */
+.menu_text_button:hover {
+  text-shadow: 0 0 8px #0ff;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+.menu_text_button:active {
+  transform: scale(0.97);
+  opacity: 0.8;
 }
