@@ -36,7 +36,7 @@ async def decode_jwt(
 def check_user_log(
     user_db: Any,
 ) -> None:
-    if not user_db:
+    if user_db is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",

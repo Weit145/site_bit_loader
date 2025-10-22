@@ -131,7 +131,7 @@ function handleNameChange(v: string) {
       console.error("Ошибка при отправке данных:", error.response?.data || error.message);
     }
       console.log("Submit:", { name, password });
-      alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
+      // alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
 
   
     
@@ -189,10 +189,10 @@ function handleNameChange(v: string) {
             >Подтвердите пароль</Input>
 
             <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_email_error || flag_name_error || flag_password_confirm_error || flag_password_error}>
-              Авторизоваться
+              Подтвердить
             </Button>
             <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
-              Регистрация
+              Войти
             </Button>
           </form>
         </div>
