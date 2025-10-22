@@ -5,10 +5,7 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y build-essential libpq-dev curl
 
 # Устанавливаем Poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-# Добавляем Poetry в PATH
-ENV PATH="/root/.local/bin:$PATH"
+RUN pip install --no-cache-dir poetry==1.8.3
 
 # Создаём директорию приложения
 WORKDIR /app

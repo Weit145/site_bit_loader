@@ -9,18 +9,37 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.users import crud, token
 from app.users.schemas import UserCreate, UserLogin, UserResponse
 
+async def chek_regist(
+    user:UserCreate,
+    session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
+)->UserCreate:
+    await check_email_reg(user=user,session=session)
+    await check_username_reg(user=user,session=session)
+    return user
 
-async def check_user_regist(
+async def check_email_reg(
+    user:UserCreate,
+    session:AsyncSession
+)->None:
+    stmt = select(User).where(User.email==user.email)
+    result= await session.execute(stmt)
+    user_db = result.scalar_one_or_none()
+    if user_db is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered",
+        )
+    
+async def check_username_reg(
     user: UserCreate,
     session: AsyncSession
-) -> UserCreate:
+) -> None:
     user_db = await get_user(session=session,username=user.username)
     if user_db is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
         )
-    return user
     
 async def get_user(session: AsyncSession, username: str) -> User | None:
     stmt = select(User).where(User.username == username)
