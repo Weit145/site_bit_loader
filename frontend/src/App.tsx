@@ -109,26 +109,27 @@ function handleNameChange(v: string) {
     const params = new URLSearchParams({
       username : name,
       password : password,
-      scope:"",
-      client_id:"",
-      client_secret:"",
+      email:email,
     })
-    try{
+    try {
       const response = await axios.post(
-          "http://127.0.0.1:8000/users/",
-          params.toString(),
+        "http://127.0.0.1:8000/users/",
+        {
+          username: name,
+          password: password,
+          email:email,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-        );
-        console.log("Ответ сервера:", response.data);
-      } 
-      catch (error: any) {
-        console.error("Ошибка при отправке данных:", error);
-      }
+      console.log("Ответ сервера:", JSON.stringify(response.data, null, 2));
+    } catch (error: any) {
+      console.error("Ошибка при отправке данных:", error.response?.data || error.message);
+    }
       console.log("Submit:", { name, password });
       alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
 
