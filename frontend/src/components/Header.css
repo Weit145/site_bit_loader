@@ -48,7 +48,6 @@
   font-weight: 400;
   font-size: 28px;
   line-height: 32px;
-  /* identical to box height */
   text-align: center;
 
   color: #FFFFFF;
@@ -60,7 +59,7 @@
 .menu_text_button {
   position: absolute;
   font-family: 'Press Start 2P';
-  margin-top:2.5%;
+  top:calc(70% - 64px/2 + 0.5px);
   font-size: 28px;
   line-height: 32px;
   color: #FFFFFF;
