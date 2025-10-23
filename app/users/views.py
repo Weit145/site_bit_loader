@@ -36,6 +36,7 @@ async def create_user_end_point(
         user=user,
         session=session,
     )
+    send_message.delay()
     access_token = token.create_access_token(data={"sub": user.username})
     return Token(access_token=access_token, token_type="bearer")
 
@@ -54,7 +55,6 @@ async def delete_all_users_end_point(
 ) -> None:
     await crud.delete_all_users(session=session)
     clear_upload_dir()
-    send_message.delay()
 
 
 @router.post("/token/", response_model=Token)
