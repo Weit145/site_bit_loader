@@ -1,110 +1,127 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Kload — Подтверждение регистрации</title>
-    <style>
-        /* Email-safe CSS (limited) */
-        body { margin:0; padding:0; background-color:#f4f6f8; }
-        table { border-collapse:collapse; }
-        img { border:0; display:block; }
-        .wrapper { width:100%; table-layout:fixed; background-color:#f4f6f8; padding-bottom:40px; }
-        .main { background-color:#ffffff; margin:0 auto; width:100%; max-width:600px; border-radius:8px; overflow:hidden; }
-        .header { padding:24px; text-align:left; }
-        .logo { font-weight:700; font-size:20px; color:#111827; text-decoration:none; }
-        .preheader { display:none !important; visibility:hidden; opacity:0; height:0; width:0; }
-        .content { padding:24px; font-family:Arial, sans-serif; color:#0f172a; line-height:1.5; }
-        h1 { margin:0 0 12px 0; font-size:24px; }
-        p { margin:0 0 16px 0; font-size:15px; }
-        .button-wrap { padding:8px 24px 24px 24px; }
-        .btn { display:inline-block; background-color:#0ea5a4; color:#ffffff; text-decoration:none; font-weight:600; padding:12px 20px; border-radius:6px; }
-        .small { font-size:13px; color:#6b7280; }
-        .footer { padding:18px 24px; font-size:13px; color:#94a3b8; text-align:center; }
-        .muted-link { color:#6b7280; text-decoration:none; }
-        @media (max-width:480px) {
-            .content { padding:18px; }
-            .header { padding:18px; }
-            .button-wrap { padding:12px 18px 18px 18px; }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KLoad — Подтверждение регистрации</title>
+<style>
+    body { 
+        margin:0; 
+        padding:0; 
+        background-color:#f8f9fa; 
+        font-family: Arial, sans-serif; 
+        color:#2c3e50; 
+    }
+    table { border-collapse:collapse; width:100%; }
+    .wrapper { 
+        width:100%; 
+        table-layout:fixed; 
+        background-color:#f8f9fa; 
+        padding:20px 0; 
+    }
+    .main { 
+        background-color:#ffffff; 
+        margin:0 auto; 
+        width:100%; 
+        max-width:600px; 
+        border:2px solid #B5F49E;
+        border-radius:8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header { 
+        padding:20px; 
+        text-align:center; 
+        font-size:24px; 
+        color:#2c3e50; 
+        font-weight:bold;
+        border-bottom: 1px solid #e9ecef;
+        background-color: #f8f9fa;
+    }
+    .content { 
+        padding:20px; 
+        font-size:14px; 
+        line-height:1.5; 
+        background-color: #ffffff;
+    }
+    h1 { 
+        margin:0 0 20px 0; 
+        font-size:18px; 
+        color:#2c3e50; 
+        text-align:center;
+        font-weight:bold;
+    }
+    p { margin:0 0 16px 0; }
+    .btn { 
+        display:inline-block; 
+        background-color:#B5F49E; 
+        color:#2c3e50; 
+        text-decoration:none; 
+        font-weight:bold; 
+        padding:12px 24px; 
+        border:1px solid #B5F49E;
+        border-radius:4px;
+        font-size:14px;
+        text-align:center;
+    }
+    .small { font-size:12px; color:#6c757d; }
+    .footer { 
+        padding:16px 20px; 
+        font-size:12px; 
+        color:#6c757d; 
+        text-align:center; 
+        border-top: 1px solid #e9ecef;
+        background-color: #f8f9fa;
+    }
+    .highlight { color: #2c3e50; font-weight:bold; }
+    a { color: #B5F49E; text-decoration:none; }
+    a:hover { color: #8ed876; text-decoration:underline; }
+    
+    /* Email client compatibility */
+    .mobile-full { width:100% !important; }
+    
+    @media (max-width:480px) { 
+        .content { padding:16px; } 
+        .header { padding:16px; font-size:20px; } 
+        h1 { font-size:16px; }
+        .btn { font-size:12px; padding:10px 20px; }
+    }
+</style>
 </head>
 <body>
-    <!-- Preheader text: shown in inbox preview (keep short) -->
-    <div class="preheader">Подтвердите ваш аккаунт на Kload, чтобы завершить регистрацию.</div>
-
-    <table class="wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+<div class="wrapper">
+    <table class="main" cellpadding="0" cellspacing="0" align="center">
         <tr>
-            <td align="center">
-            <table class="main" cellpadding="0" cellspacing="0" role="presentation">
-
-            <!-- Header -->
-            <tr>
-                <td class="header">
-                <a href="{{site_url}}" class="logo">Kload</a>
-                </td>
-            </tr>
-
-            <!-- Body -->
-            <tr>
-                <td class="content">
-                <h1>Подтвердите регистрацию</h1>
-                <p>Привет, <strong>{{username}}</strong>! Спасибо за регистрацию на <strong>Kload</strong>. Нажмите кнопку ниже, чтобы подтвердить ваш адрес электронной почты и завершить регистрацию.</p>
-
-                <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="button-wrap">
+            <td class="header">KLoad</td>
+        </tr>
+        <tr>
+            <td class="content">
+                <h1>ПОДТВЕРЖДЕНИЕ РЕГИСТРАЦИИ</h1>
+                <p>Привет, <strong class="highlight">{{username}}</strong>! Спасибо за регистрацию на <strong class="highlight">KLoad</strong>. Чтобы завершить регистрацию и активировать аккаунт, нажмите кнопку ниже:</p>
+                
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
                     <tr>
-                    <td align="center">
-                        <a href="{{confirm_url}}" class="btn" target="_blank" rel="noopener">Подтвердить аккаунт</a>
-                    </td>
+                        <td align="center">
+                            <a href="{{confirm_url}}" class="btn" target="_blank" rel="noopener">ПОДТВЕРДИТЬ АККАУНТ</a>
+                        </td>
                     </tr>
                 </table>
-
-                <p class="small">Если кнопка не работает, скопируйте и вставьте ссылку в браузер:</p>
-                <p class="small"><a href="{{confirm_url}}" class="muted-link">{{confirm_url}}</a></p>
-
-                <hr style="border:none;border-top:1px solid #e6eef2;margin:20px 0;" />
-
-                <p class="small">Если вы не регистрировались на Kload, проигнорируйте это сообщение — ссылка истечёт через <strong>24 часа</strong>.</p>
-
-                <p class="small">Нужна помощь? Напишите в нашу службу поддержки: <a href="mailto:{{support_email}}" class="muted-link">{{support_email}}</a></p>
-                </td>
-            </tr>
-
-            <!-- Footer inside card -->
-            <tr>
-                <td class="footer">
-                <div class="small">Kload · <a href="{{site_url}}" class="muted-link">{{site_url}}</a></div>
-                <div class="small" style="margin-top:6px;">Если вы не хотите получать эти письма, вы можете <a href="{{unsubscribe_url}}" class="muted-link">отписаться</a>.</div>
-                </td>
-            </tr>
-
-            </table>
-
-            <!-- Outside footer -->
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;margin:14px auto 0;">
-            <tr>
-                <td style="text-align:center;font-family:Arial, sans-serif;font-size:12px;color:#94a3b8;padding:8px 12px;">
-                © {{year}} Kload. Все права защищены.
-                </td>
-            </tr>
-            </table>
-
-        </td>
+                
+                <p class="small">Если кнопка не работает, скопируйте ссылку в браузер:</p>
+                <p class="small"><a href="{{confirm_url}}">{{confirm_url}}</a></p>
+                
+                <hr style="border:none;border-top:1px solid #e9ecef;margin:20px 0;" />
+                
+                <p class="small">Если вы не регистрировались на KLoad, просто проигнорируйте это письмо — ссылка истечёт через <strong>24 часа</strong>.</p>
+                <p class="small">Нужна помощь? Напишите: <a href="mailto:{{support_email}}">{{support_email}}</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td class="footer">
+                © {{year}} KLoad. Все права защищены.<br>
+                <a href="{{unsubscribe_url}}">Отписаться от писем</a>
+            </td>
         </tr>
     </table>
-
-    <!-- Plain-text fallback for clients that ignore HTML (for copy/paste) -->
-    <!--
-    Subject: Подтвердите регистрацию на Kload
-
-    Привет, {{username}}!
-
-    Спасибо за регистрацию на Kload. Чтобы подтвердить ваш адрес электронной почты и завершить регистрацию, откройте ссылку:
-    {{confirm_url}}
-
-    Если вы не регистрировались, проигнорируйте это письмо.
-
-    Поддержка: {{support_email}}
-  -->
+</div>
 </body>
-</html>
+</html> 
