@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, String
+from sqlalchemy import Boolean, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -19,7 +19,7 @@ class User(Base):
 
     email: Mapped[str] = mapped_column(String,  unique=True)
 
-    disabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    active: Mapped[bool] = mapped_column(Boolean, server_default=text("0"))
 
     posts: Mapped[list["Post"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
@@ -27,7 +27,7 @@ class User(Base):
 
     profile: Mapped["Profile"] = relationship(
         back_populates="user",
-        cascade="all, delete-orphan",   
+        cascade="all, delete-orphan",
         uselist=False,
         lazy="joined",
     )

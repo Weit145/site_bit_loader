@@ -1,11 +1,13 @@
-from app.core.config import settings
-from app.core.models import User
+from pickle import NONE
+from typing import Any
 from fastapi import HTTPException, status
-from sqlalchemy import select, Result
+from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
+from app.core.models import User
 from app.users.schemas import UserCreate, UserLogin, UserResponse
-
+from app.users.token import decode_jwt_reg
 # Создание User
 
 
@@ -29,7 +31,34 @@ def add_password_userdb(user_create: UserCreate) -> User:
 def get_password_hash(password) -> str:
     return settings.pwd_context.hash(password)
 
+# Активация user
 
+async def registration_confirmation(
+    session: AsyncSession,
+    token_pod: str,
+) -> UserResponse:
+    username = await decode_jwt_reg(token=token_pod)
+    user_db = await get_user(session=session, username=username)
+    check_no_active(user_db)
+    stmt = (
+        update(User)
+        .where(User.id == user_db.id)
+        .values(active=True)
+        .execution_options(synchronize_session="fetch")
+    )
+    await session.execute(stmt)
+    await session.commit()
+    return UserResponse.model_validate(user_db)
+
+def check_no_active(
+    user_db:User |None,
+)->None:
+    if user_db is None or user_db.active==True:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User is already active",
+        )
+    
 # Удаление UserMe
 
 
@@ -89,7 +118,7 @@ def verify_password(plain_password, hashed_password) -> bool:
     return settings.pwd_context.verify(plain_password, hashed_password)
 
 
-async def get_user(session: AsyncSession, username: str) -> User | None:
+async def get_user(session: AsyncSession, username:Any) -> User | None:
     stmt = select(User).where(User.username == username)
     result = await session.execute(stmt)
     user_db = result.scalar_one_or_none()

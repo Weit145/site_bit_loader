@@ -1,8 +1,8 @@
-from app.core.models import Post
 from fastapi import HTTPException, status
 from sqlalchemy import Result, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.models import Post
 from app.posts.schemas import CreatePost, OutPost, UpdatePost
 
 # Срздания поста

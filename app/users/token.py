@@ -2,10 +2,11 @@ from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
 
 import jwt
-from app.core.config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
+
+from app.core.config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
@@ -23,6 +24,18 @@ def create_access_token(data: dict) -> str:
 async def decode_jwt(
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
+    try:
+        username = jwt.decode(
+            token, settings.secret_key, algorithms=[settings.algorithm]
+        ).get("sub")
+        check_user_log(username)
+        return username
+    except InvalidTokenError:
+        check_user_log(None)
+
+async def decode_jwt_reg(
+    token: str,
+)->str|None:
     try:
         username = jwt.decode(
             token, settings.secret_key, algorithms=[settings.algorithm]
