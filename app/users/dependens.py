@@ -77,7 +77,7 @@ async def user_form_to_user_login(
 ):
     try:
         user_create = UserLogin(
-            username=user_form.username, password=user_form.password
+            username=user_form.username, password=user_form.password,
         )
         return user_create
     except Exception as e:

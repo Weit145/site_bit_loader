@@ -98,6 +98,7 @@ async def authenticate_user(
     user: UserLogin,
 ) -> UserResponse:
     user_db = await get_user(session=session, username=user.username)
+    check_active(user_db)
     check_userdb_and_password(user_db=user_db, password=user.password)
     return UserResponse.model_validate(user_db)
 
@@ -110,6 +111,16 @@ def check_userdb_and_password(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+def check_active(
+    user_db:User |None,
+)->None:
+    if user_db is None or user_db.active==False:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
