@@ -1,18 +1,18 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, Form
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
 from app.profiles.crud import clear_upload_dir, create_profile
-
+from app.tasks.tasks import send_message
+from app.users import crud, token
 from app.users.dependens import (
     chek_regist,
     get_current_user,
-    user_form_to_user_login,
     user_by_id_path,
+    user_form_to_user_login,
 )
-from app.users import crud, token
 from app.users.schemas import (
     Token,
     UserCreate,
@@ -21,25 +21,31 @@ from app.users.schemas import (
     UserResponse,
 )
 
-from app.tasks.tasks import send_message
-
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/", response_model=Token)
+@router.post("/", status_code=status.HTTP_200_OK)
 async def create_user_end_point(
     user_create: Annotated[UserCreate,Depends(chek_regist)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
-) -> Token:
+) -> dict:
     user = await crud.create_user(session=session, user_create=user_create)
     await create_profile(
         user=user,
         session=session,
     )
-    send_message.delay()
+    access_token = token.create_access_token(data={"sub": user.username})
+    send_message.delay(token=access_token,username=user.username,email=user.email)
+    return {"message": "Email send"}
+
+@router.get("/confirm/", response_model=Token)
+async def registration_confirmation_end_point(
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+    token_pod: str = Query(..., description="Токен подтверждения регистрации"),
+)->Token:
+    user = await crud.registration_confirmation(session=session,token_pod=token_pod)
     access_token = token.create_access_token(data={"sub": user.username})
     return Token(access_token=access_token, token_type="bearer")
-
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me_user_end_point(

@@ -23,7 +23,7 @@ class Setting(BaseSettings):
     pwd_context: ClassVar[CryptContext] = CryptContext(
         schemes=["argon2"], deprecated="auto"
     )
-    
+
     broker:str = os.getenv("CELERY_BROKER")
 
 

@@ -1,10 +1,10 @@
 from typing import Annotated
 
-from app.core.models.db_hellper import db_helper
-from app.core.models.profile import Profile
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.models.db_hellper import db_helper
+from app.core.models.profile import Profile
 from app.profiles import crud
 from app.profiles.dependens import add_img_in_folder, profiledb_by_userid
 from app.profiles.schemas import ProfileResponse

@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from app.core.models import Post, db_helper
 from fastapi import Depends, HTTPException, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.models import Post, db_helper
 from app.users.dependens import get_current_user
 from app.users.schemas import UserResponse
 

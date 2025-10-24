@@ -10,7 +10,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
-    email: Annotated[EmailStr,MinLen(6)]    
+    email: Annotated[EmailStr,MinLen(6)]
 
 
 class UserLogin(UserBase):
@@ -23,11 +23,12 @@ class UserGet(UserBase):
 
 class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
+    email:str
     id: int
 
 
 class AvtorUser(UserBase):
-    disabled: bool | None = None
+    active: bool | None = None
 
 
 class Token(BaseModel):
