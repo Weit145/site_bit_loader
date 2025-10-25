@@ -1,10 +1,10 @@
 import asyncio
 from pathlib import Path
+
 from jinja2 import Template
 
 from app.tasks.celery import app
 from app.tasks.email.email import send_email
-
 
 
 @app.task(name="send_email")
@@ -16,7 +16,7 @@ def send_message(token:str, username:str,email:str):
     rendered_html = template.render(
         confirm_url=f"http://127.0.0.1:8000/users/confirm/?token_pod={token}",
         username=username,
-        site_url="http://127.0.0.1:8000",
+        site_url="http://localhost:5173/",
         support_email="support@kload.com",
         unsubscribe_url="http://127.0.0.1:8000/unsubscribe",
         year=2025

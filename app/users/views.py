@@ -1,11 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
 from app.profiles.crud import clear_upload_dir, create_profile
-from app.tasks.tasks import send_message
 from app.users import crud, token
 from app.users.dependens import (
     chek_regist,
@@ -34,8 +33,7 @@ async def create_user_end_point(
         user=user,
         session=session,
     )
-    access_token = token.create_access_token(data={"sub": user.username})
-    send_message.delay(token=access_token,username=user.username,email=user.email)
+    crud.send_email(user)
     return {"message": "Email send"}
 
 @router.get("/confirm/", response_model=Token)
