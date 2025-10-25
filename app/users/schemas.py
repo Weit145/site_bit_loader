@@ -15,7 +15,7 @@ class UserCreate(UserBase):
 
 class UserLogin(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
-    
+
 
 class UserGet(UserBase):
     pass

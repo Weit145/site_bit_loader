@@ -37,11 +37,11 @@ async def decode_jwt_reg(
     token: str,
 )->str|None:
     try:
-        username = jwt.decode(
+        email = jwt.decode(
             token, settings.secret_key, algorithms=[settings.algorithm]
         ).get("sub")
-        check_user_log(username)
-        return username
+        check_user_log(email)
+        return email
     except InvalidTokenError:
         check_user_log(None)
 
