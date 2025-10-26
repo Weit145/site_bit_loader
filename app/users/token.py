@@ -9,8 +9,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 
 from app.core.models.user import User
-
 from app.core.config import settings
+
+from app.users.schemas import Cookie
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
@@ -24,7 +25,7 @@ def create_access_token(data: dict) -> str:
     )
     return encoded_jwt
 
-async def create_refresh_token(session: AsyncSession,data:dict, user_db:User) -> str:
+async def create_refresh_token(session: AsyncSession,data:dict, user_db:User) -> Cookie:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(days=settings.access_token_refresh_day)
     to_encode.update({"exp": expire})
@@ -34,7 +35,8 @@ async def create_refresh_token(session: AsyncSession,data:dict, user_db:User) ->
     user_db.refresh_token=encoded_jwt
     await session.commit()
     await session.refresh(user_db)
-    return encoded_jwt
+    cookie = Cookie(key="refresh_token", value=encoded_jwt)
+    return cookie
 
 
 async def decode_jwt(

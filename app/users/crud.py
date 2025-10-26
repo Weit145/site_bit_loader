@@ -47,7 +47,7 @@ async def registration_confirmation(
         .values(active=True)
         .execution_options(synchronize_session="fetch")
     )
-    result = await session.execute(stmt)
+    await session.execute(stmt)
     await session.commit()
     return user_db
 
