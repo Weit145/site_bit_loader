@@ -41,9 +41,10 @@ async def registration_confirmation_end_point(
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
     token_pod: str = Query(..., description="Токен подтверждения регистрации"),
 )->Token:
-    user = await crud.registration_confirmation(session=session,token_pod=token_pod)
-    access_token = token.create_access_token(data={"sub": user.username})
-    return Token(access_token=access_token, token_type="bearer")
+    user_db = await crud.registration_confirmation(session=session,token_pod=token_pod)
+    access_token = token.create_access_token(data={"sub": user_db.username})
+    refresh_token = await token.create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
+    return Token(access_token=access_token,refresh_token=refresh_token, token_type="bearer")
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me_user_end_point(
@@ -66,9 +67,11 @@ async def login_for_access_token_end_point(
     form_data: Annotated[UserLogin, Depends(user_form_to_user_login)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> Token:
-    user = await crud.authenticate_user(session=session, user=form_data)
-    access_token = token.create_access_token(data={"sub": user.username})
-    return Token(access_token=access_token, token_type="bearer")
+    user_db = await crud.authenticate_user(session=session, user=form_data)
+    access_token = token.create_access_token(data={"sub": user_db.username})
+    refresh_token = await token.create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
+    return Token(access_token=access_token,refresh_token=refresh_token, token_type="bearer")
+
 
 
 @router.get("/me/", response_model=UserResponse)

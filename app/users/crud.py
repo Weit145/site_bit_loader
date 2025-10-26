@@ -37,7 +37,7 @@ def get_password_hash(password) -> str:
 async def registration_confirmation(
     session: AsyncSession,
     token_pod: str,
-) -> UserResponse:
+) -> User:
     email = await decode_jwt_reg(token=token_pod)
     user_db = await get_user_by_email(session=session, email=email)
     check_no_active(user_db)
@@ -47,9 +47,9 @@ async def registration_confirmation(
         .values(active=True)
         .execution_options(synchronize_session="fetch")
     )
-    await session.execute(stmt)
+    result = await session.execute(stmt)
     await session.commit()
-    return UserResponse.model_validate(user_db)
+    return user_db
 
 async def get_user_by_email(session: AsyncSession, email:Any) -> User | None:
     stmt = select(User).where(User.email == email)
@@ -110,11 +110,11 @@ async def delete_all_users(session: AsyncSession) -> None:
 async def authenticate_user(
     session: AsyncSession,
     user: UserLogin,
-) -> UserResponse:
+) -> User:
     user_db = await get_user_by_username(session=session, username=user.username)
     check_active(user_db)
     check_userdb_and_password(user_db=user_db, password=user.password)
-    return UserResponse.model_validate(user_db)
+    return user_db
 
 
 def check_userdb_and_password(
