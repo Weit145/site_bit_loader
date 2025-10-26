@@ -1,8 +1,8 @@
-"""User active
+"""Add refresh token in BD User
 
-Revision ID: 12b13ee8ff14
+Revision ID: 37b413516cc5
 Revises: 
-Create Date: 2025-10-24 13:39:15.936454
+Create Date: 2025-10-26 15:08:01.695094
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '12b13ee8ff14'
+revision: str = '37b413516cc5'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,6 +26,7 @@ def upgrade() -> None:
     sa.Column('password', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('active', sa.Boolean(), server_default=sa.text('0'), nullable=False),
+    sa.Column('refresh_token', sa.String(), server_default=sa.text('0'), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')

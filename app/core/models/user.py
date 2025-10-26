@@ -21,6 +21,8 @@ class User(Base):
 
     active: Mapped[bool] = mapped_column(Boolean, server_default=text("0"))
 
+    refresh_token: Mapped[str] = mapped_column(String, server_default=text("0"))
+
     posts: Mapped[list["Post"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
