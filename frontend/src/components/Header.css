@@ -75,6 +75,7 @@
   text-shadow: 0 0 8px #0ff;
   transform: scale(1.05);
   transition: all 0.2s ease;
+  color: #FFFFFF;
 }
 
 .menu_text_button:active {
