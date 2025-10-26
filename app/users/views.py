@@ -1,6 +1,7 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status, Response
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
@@ -18,6 +19,7 @@ from app.users.schemas import (
     UserGet,
     UserLogin,
     UserResponse,
+    Cookie,
 )
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -36,15 +38,24 @@ async def create_user_end_point(
     crud.send_email(user)
     return {"message": "Email send"}
 
-@router.get("/confirm/", response_model=Token)
+@router.get("/confirm/",status_code=status.HTTP_200_OK)
 async def registration_confirmation_end_point(
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
     token_pod: str = Query(..., description="Токен подтверждения регистрации"),
-)->Token:
+)->JSONResponse:
     user_db = await crud.registration_confirmation(session=session,token_pod=token_pod)
     access_token = token.create_access_token(data={"sub": user_db.username})
-    refresh_token = await token.create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
-    return Token(access_token=access_token,refresh_token=refresh_token, token_type="bearer")
+    cookie = await token.create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
+    response = JSONResponse(content={"access_token":access_token})
+    response.set_cookie(
+        key=cookie.key,
+        value=cookie.value,
+        httponly=cookie.httponly,
+        secure=cookie.secure,
+        samesite=cookie.samesite,
+        max_age=cookie.max_age
+    )
+    return response
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me_user_end_point(
@@ -62,15 +73,24 @@ async def delete_all_users_end_point(
     clear_upload_dir()
 
 
-@router.post("/token/", response_model=Token)
+@router.post("/token/", status_code=status.HTTP_200_OK)
 async def login_for_access_token_end_point(
     form_data: Annotated[UserLogin, Depends(user_form_to_user_login)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
-) -> Token:
+) -> JSONResponse:
     user_db = await crud.authenticate_user(session=session, user=form_data)
     access_token = token.create_access_token(data={"sub": user_db.username})
-    refresh_token = await token.create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
-    return Token(access_token=access_token,refresh_token=refresh_token, token_type="bearer")
+    cookie = await token.create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
+    response = JSONResponse(content={"access_token":access_token})
+    response.set_cookie(
+        key=cookie.key,
+        value=cookie.value,
+        httponly=cookie.httponly,
+        secure=cookie.secure,
+        samesite=cookie.samesite,
+        max_age=cookie.max_age
+    )
+    return response
 
 
 
