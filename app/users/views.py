@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status, Response
+from fastapi import APIRouter, Depends, Query, status, Cookie
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,7 +19,7 @@ from app.users.schemas import (
     UserGet,
     UserLogin,
     UserResponse,
-    Cookie,
+    Cookies,
 )
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -56,6 +56,15 @@ async def registration_confirmation_end_point(
         max_age=cookie.max_age
     )
     return response
+
+@router.get("/refresh/", response_model=Token)
+async def refresh_token_end_point(
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+    cookie: Annotated[Cookies,Cookie()]
+)->Token:
+    username = await token.update_token(session=session,cookie=cookie)
+    access_token = token.create_access_token(data={"sub": username})
+    return Token(access_token=access_token,token_type="bearer")
 
 @router.delete("/me/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_me_user_end_point(
