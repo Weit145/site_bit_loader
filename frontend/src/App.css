@@ -45,6 +45,11 @@
 
   color: #ffffff;
 }
+.content_text_root{
+  /* color: rgb(0, 255, 179); */
+  color: darkred;
+
+}
 
 .button_box{
 

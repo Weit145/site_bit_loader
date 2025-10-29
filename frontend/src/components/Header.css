@@ -30,7 +30,8 @@
   left: 2.5vw;
   top: 1vh;
   background: rgba(0, 0, 0, 0.001);
-  border: 0.5vh solid #000000;
+  border: 0.5vh solid rgb(0, 255, 179);
+  /* border-style: dashed; */
   border-radius: 2.5vw;
   backdrop-filter: blur(0.5vh);
   align-items: center;
