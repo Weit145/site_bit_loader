@@ -3,14 +3,14 @@ from datetime import datetime
 from pathlib import Path as Path_oc
 from typing import Annotated
 
-from app.core.models import Profile, db_helper
 from fastapi import Depends, HTTPException, Path, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.models import Profile, db_helper
+from app.profiles.schemas import ProfileResponse
 from app.users.dependens import get_current_user
 from app.users.schemas import UserResponse
-
-from app.profiles.schemas import ProfileResponse
 
 
 async def profile_by_id(

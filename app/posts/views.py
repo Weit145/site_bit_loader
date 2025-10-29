@@ -1,22 +1,22 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.models.db_hellper import db_helper
 from app.core.models.post import Post
-from fastapi import APIRouter, Depends, Form, status
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.users.dependens import get_current_user
-from app.users.schemas import UserResponse
-
 from app.posts import crud
 from app.posts.dependens import check_post_and_user_correct, postdb_by_id
 from app.posts.schemas import CreatePost, OutPost, UpdatePost
+from app.users.dependens import get_current_user
+from app.users.schemas import UserResponse
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
 @router.post("/", response_model=OutPost)
 async def create_post_end_point(
-    post: Annotated[CreatePost, Form()],
+    post: CreatePost,
     current_user: Annotated[UserResponse, Depends(get_current_user)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> OutPost:
@@ -59,7 +59,7 @@ async def get_by_id_post_end_point(
 
 @router.put("/{post_id}/", response_model=OutPost)
 async def update_post_end_point(
-    post: Annotated[UpdatePost, Form()],
+    post: UpdatePost,
     post_to_redact: Annotated[Post, Depends(check_post_and_user_correct)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> OutPost:

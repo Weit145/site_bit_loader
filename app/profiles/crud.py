@@ -1,13 +1,13 @@
 from pathlib import Path
 from typing import Annotated
 
-from app.core.models import Profile
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import Result, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.users.schemas import UserResponse
 
+from app.core.models import Profile
 from app.profiles.schemas import ProfileResponse
+from app.users.schemas import UserResponse
 
 # Создание профеля испотлбзуеться user/views.py
 

@@ -10,7 +10,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: Annotated[str, MinLen(6), MaxLen(32)]
-    email: Annotated[EmailStr,MinLen(6)]    
+    email: Annotated[EmailStr,MinLen(6)]
 
 
 class UserLogin(UserBase):
@@ -23,13 +23,32 @@ class UserGet(UserBase):
 
 class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
+    email:str
     id: int
 
 
 class AvtorUser(UserBase):
-    disabled: bool | None = None
+    active: bool | None = None
 
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class Cookies(BaseModel):
+    key:str
+    value:str
+    httponly:bool = False
+    secure: bool = True
+    samesite:str = "strict"
+    max_age :int = 7*24*3600
+
+
+# response.set_cookie(
+#     key="refresh_token",
+#     value=refresh_token,
+#     httponly=True,    # 🔒 нельзя прочитать из JS
+#     secure=True,      # 🚫 не уходит по HTTP, только HTTPS
+#     samesite="Strict",# 🛡️ не отправляется с других сайтов (CSRF защита)
+#     max_age=7 * 24 * 3600
+# )
