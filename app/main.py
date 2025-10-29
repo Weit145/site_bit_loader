@@ -2,9 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.posts.views import router as posts_router
-from app.profiles.views import router as profile_router
-from app.users.views import router as users_router
+from app.posts import router as posts_router
+from app.profiles import router as profile_router
+from app.users import router as users_router
 
 app = FastAPI()
 
@@ -16,9 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(users_router, tags=["Users"])
-app.include_router(posts_router, tags=["Posts"])
-app.include_router(profile_router, tags=["Profile"])
+app.include_router(users_router,prefix="/user", tags=["Users"])
+app.include_router(posts_router,prefix="/post", tags=["Posts"])
+app.include_router(profile_router,prefix="/profile", tags=["Profile"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

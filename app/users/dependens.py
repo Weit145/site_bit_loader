@@ -9,7 +9,7 @@ from app.core.models import User, db_helper
 from app.users import crud, token
 from app.users.schemas import UserCreate, UserLogin, UserResponse
 
-# Смотрит что человек создал акк но не подтвердил   
+# Смотрит что человек создал акк но не подтвердил
 
 async def chek_regist(
     user:UserCreate,
@@ -51,7 +51,7 @@ async def check_username_reg(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
         )
-        
+
 # Достанет user из дб по нику
 
 async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
