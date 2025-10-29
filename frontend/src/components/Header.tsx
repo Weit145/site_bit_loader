@@ -1,7 +1,9 @@
 import './Header.css'
 import './button_handler'
 import menu_option from '../assets/menu_option.svg'
+import { Link } from 'react-router'
 // import Button from './button_handler'
+
 export default function Header(){
 
     return(
@@ -9,10 +11,10 @@ export default function Header(){
             <div className='menu_box'>
                 <input type="image" className='menu_option' src = {menu_option} alt={'menu option'}/>
                     {/* <h1 className='menu_text'>KLoad</h1> */}
-
-                 <button className='menu_text_button'>
+                <Link to="/" className='menu_text_button'>
                     KLoad
-                 </button>
+
+                </Link>
             </div>
         </header>
     )

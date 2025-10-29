@@ -1,0 +1,98 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+.form_box{
+  display: flex;
+  flex-direction:column;
+  box-sizing: border-box;
+
+  position: absolute;
+  width: 95vw;
+  height: 82.5vh;
+  left: 2.5vw;
+  top: 15vh;
+  background: rgba(240, 248, 255, 0.95);
+  border-radius: 2.5vw;
+  /* border: 5vh solid #000000; */
+
+  backdrop-filter: blur(0.5vh);
+  align-items: center;
+
+
+}
+
+.form_text{
+  /* position: absolute; */
+  width: 50vw;
+  top: 2.5vh;
+
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-size: calc((5vh+5vw)/2);
+  /* identical to box height */
+  text-align: center;
+
+  color: #000000;
+}
+
+.form_button_box{
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:1.5vh;
+
+}
+.form_area{
+    display: flex;
+    flex-direction: column;
+    width: var(--form-width);
+    max-width: var(--form-max-width);
+    gap: var(--row-gap);
+    box-sizing: border-box;
+    align-items: stretch;
+    margin-top: 1vh;
+    /* position: static; */
+    /* margin-right: 10vw; */
+}

@@ -30,7 +30,8 @@
   left: 2.5vw;
   top: 1vh;
   background: rgba(0, 0, 0, 0.001);
-  border: 0.5vh solid #000000;
+  border: 0.5vh solid rgb(0, 255, 179);
+  /* border-style: dashed; */
   border-radius: 2.5vw;
   backdrop-filter: blur(0.5vh);
   align-items: center;
@@ -75,6 +76,7 @@
   text-shadow: 0 0 8px #0ff;
   transform: scale(1.05);
   transition: all 0.2s ease;
+  color: #FFFFFF;
 }
 
 .menu_text_button:active {
