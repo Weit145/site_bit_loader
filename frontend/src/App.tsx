@@ -21,7 +21,7 @@ export default function App() {
       <main>
         <div className="content_box">
           <h1 className="content_text">Тема треда</h1>
-          <h2 className="content_text">Здесь скоро будет форум</h2>
+          <h2 className="content_text"><span className="content_text_root">root@:~$</span> Здесь скоро будет форум</h2>
           <Link to ="/register">
               <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
               Регистрация
