@@ -14,7 +14,7 @@ def send_message(token:str, username:str,email:str):
 
     template = Template(html_content)
     rendered_html = template.render(
-        confirm_url=f"http://127.0.0.1:8000/users/confirm/?token_pod={token}",
+        confirm_url=f"http://127.0.0.1:8000/user/registration/confirm/?token_pod={token}",
         username=username,
         site_url="http://localhost:5173/",
         support_email="support@kload.com",
