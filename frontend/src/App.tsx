@@ -1,6 +1,6 @@
-import axios from "axios";
+// import axios from "axios";
 
-import  { useState } from "react";
+// import  { useState } from "react";
 import "./App.css";
 import Button from "./components/button_handler";
 import "./components/button_handler.css";
@@ -13,6 +13,8 @@ export default function App() {
   function Button_click(type: string) {
     console.log("Button clicked", type);
   }
+
+  
   return (
     <div>
 
@@ -30,6 +32,11 @@ export default function App() {
             <Link to ="/login">
               <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
               Войти
+              </Button>
+            </Link>
+            <Link to ="/confirm">
+              <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
+              Подтвердите регистрацию
               </Button>
             </Link>
         </div>
