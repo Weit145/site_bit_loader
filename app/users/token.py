@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.models.user import User
@@ -42,7 +43,6 @@ def get_password_hash(password) -> str:
 
 async def update_token(session: AsyncSession,refresh_token:str):
     username = await decode_jwt_reg(refresh_token)
-    from app.users.dependens import get_user_by_username
     usr_db = await get_user_by_username(session=session,username=username)
     if not verify_password(refresh_token,usr_db.refresh_token):
         raise HTTPException(
@@ -51,6 +51,13 @@ async def update_token(session: AsyncSession,refresh_token:str):
             headers={"WWW-Authenticate": "Bearer"},
         )
     return username
+
+async def get_user_by_username(session: AsyncSession, username:Any) -> User | None:
+    stmt = select(User).where(User.username == username)
+    result = await session.execute(stmt)
+    user_db = result.scalar_one_or_none()
+    return user_db
+
 
 def verify_password(plain_password, hashed_password) -> bool:
     return settings.pwd_context.verify(plain_password, hashed_password)
