@@ -25,6 +25,8 @@ export default function Register() {
   const [touchedPassword, setTouchedPassword] = useState<boolean>(false);
   const [touchedPasswordConfirm, setTouchedPasswordConfirm] = useState<boolean>(false);
 
+  const [accessToken, setAccessToken] = useState<string>("");
+
   const validateName = (v: string) => v.trim().length >= 3; // минимум 3 символов
   const validateEmail = (v: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -107,7 +109,6 @@ function handleNameChange(v: string) {
       });
       return;
     }
-
     const params = new URLSearchParams({
       username : name,
       password : password,
@@ -115,7 +116,7 @@ function handleNameChange(v: string) {
     })
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/users/",
+        "http://127.0.0.1:8000/user/registration",
         {
           params,
           username: name,
