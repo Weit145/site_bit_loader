@@ -1,11 +1,10 @@
-from app.core.models import User
-from app.core.config import settings
-from app.users.utils.password import verify_password
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.users.schemas import UserCreate
+from app.core.models import User
 from app.core.services.user_service import SQLAlchemyUserRepository
+from app.users.schemas import UserCreate
+from app.users.utils.password import verify_password
 
 
 def check_for_regist(
@@ -16,7 +15,7 @@ def check_for_regist(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username no active email, send email",
         )
-    
+
 def check_for_current(
     user_db:User|None,
 )->None:
@@ -43,7 +42,7 @@ def check_no_active(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User is already active",
         )
-    
+
 def check_active(
     user_db:User,
 )->None:
@@ -53,7 +52,7 @@ def check_active(
             detail="User is not active",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
 def check_user(
     user_db: User | None,
 ) -> None:
@@ -84,7 +83,7 @@ async def check_email_reg(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
         )
-    
+
 
 async def check_username_reg(
     user: UserCreate,
@@ -96,7 +95,7 @@ async def check_username_reg(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
         )
-    
+
 def check_valid_refresh_token(
     result:bool,
 )->None:

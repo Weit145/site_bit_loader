@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Annotated
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.responses import JSONResponse
-from fastapi import Path
-from app.core.models import User
 
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.models import User
 from app.users.schemas import (
     Token,
     UserLogin,
@@ -54,5 +53,5 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    async def get_user_by_id(self, user_id: Annotated[int, Path(ge=1)],)->UserResponse:
+    async def get_user_by_id(self, user_id: int, session: AsyncSession) -> UserResponse:
         pass

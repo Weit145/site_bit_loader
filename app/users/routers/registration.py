@@ -3,13 +3,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.models import User
 from app.core.models.db_hellper import db_helper
-
 from app.users.dependens import (
     dependens_chek_regist,
 )
-
 from app.users.services.user_service import UserService
 
 router = APIRouter(prefix="/registration")

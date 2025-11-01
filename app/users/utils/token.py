@@ -9,12 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.models.user import User
-from app.users.schemas import Cookies
-
 from app.core.services.user_service import SQLAlchemyUserRepository
-from app.users.utils.checks import(
-    check_valid_refresh_token,
+from app.users.schemas import Cookies
+from app.users.utils.checks import (
     check_access_token,
+    check_valid_refresh_token,
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/auth/token")

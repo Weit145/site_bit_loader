@@ -12,7 +12,6 @@ from app.users.schemas import (
     Token,
     UserLogin,
 )
-
 from app.users.services.user_service import UserService
 
 router = APIRouter(prefix="/auth")

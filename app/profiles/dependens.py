@@ -1,14 +1,23 @@
 import shutil
-from datetime import datetime
-from pathlib import Path as Path_oc
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Path, UploadFile, status
-from sqlalchemy import select
+from fastapi import Depends, Path, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import Profile, db_helper
+from app.core.services.profile_servicr import SQLAlchemyProfileRepository
 from app.profiles.schemas import ProfileResponse
+from app.profiles.utils.checks import (
+    check_file,
+    check_profile,
+)
+from app.profiles.utils.convert import (
+    convert_profiledb,
+)
+from app.profiles.utils.dir import (
+    file_extension,
+    upload_dir,
+)
 from app.users.dependens import get_current_user
 from app.users.schemas import UserResponse
 
@@ -17,40 +26,19 @@ async def profile_by_id(
     profile_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ProfileResponse:
-    profile_db = await session.get(Profile, profile_id)
-    if profile_db is not None:
-        return ProfileResponse.model_validate(profile_db)
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail=f"Profile {profile_id} not found"
-    )
+    profile_db = await SQLAlchemyProfileRepository.get_profile_by_id(profile_id, session)
+    check_profile(profile_db)
+    return convert_profiledb(profile_db)
+
 
 
 async def profiledb_by_userid(
     current_user: Annotated[UserResponse, Depends(get_current_user)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> Profile:
-    stmt = select(Profile).where(Profile.user_id == current_user.id)
-    result = await session.execute(stmt)
-    profile = result.scalar_one_or_none()
-    if not profile:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Profile {current_user.id} not found",
-        )
-    return profile
-
-async def check_file(
-    file: UploadFile,
-) -> UploadFile:
-    if (
-        not file.content_type
-        or not file.content_type.startswith("image/")
-        or file.filename is None
-    ):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Problem file"
-        )
-    return file
+    profile_db = await SQLAlchemyProfileRepository.get_profile_by_user_id(current_user.id, session)
+    check_profile(profile_db)
+    return profile_db
 
 async def add_img_in_folder(
     file: Annotated[UploadFile, Depends(check_file)],
@@ -68,21 +56,3 @@ async def add_img_in_folder(
         img=True,
         user_id=current_user.id,
     )
-
-
-def upload_dir() -> Path_oc:
-    upload_dir = Path_oc("app/uploads")
-    upload_dir.mkdir(exist_ok=True)
-    return upload_dir
-
-
-def file_extension(
-    file: UploadFile,
-    current_user: UserResponse,
-) -> str:
-    if file.filename is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Dont open file"
-        )
-    Extension = Path_oc(file.filename).suffix.lower()
-    return f"{current_user.id}_{int(datetime.now().timestamp())}{Extension}"
