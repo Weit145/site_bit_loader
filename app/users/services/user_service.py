@@ -1,4 +1,3 @@
-from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path, Query, status, HTTPException
 from fastapi.responses import JSONResponse
@@ -17,9 +16,6 @@ from app.users.utils.token import(
     create_refresh_token,
     decode_jwt_email,
     update_token,
-)
-from app.users.dependens import (
-    dependens_chek_regist,
 )
 
 from app.users.utils.checks import (
