@@ -1,18 +1,17 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Path, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User, db_helper
-from app.users.utils import token
-from app.users.schemas import UserCreate, UserLogin, UserResponse
-
 from app.core.services.user_service import SQLAlchemyUserRepository
+from app.users.schemas import UserCreate, UserLogin, UserResponse
+from app.users.utils import token
 from app.users.utils.checks import (
+    check_email_reg,
     check_for_current,
     check_for_regist,
-    check_email_reg,
     check_username_reg,
 )
 

@@ -1,7 +1,7 @@
 from app.core.models import User
-
-from app.users.utils.token import create_access_token
 from app.tasks.tasks import send_message
+from app.users.utils.token import create_access_token
+
 
 def send_email(user:User)->None:
     access_token = create_access_token(data={"sub": user.email})

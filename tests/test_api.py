@@ -1,10 +1,10 @@
-import pytest
+from unittest.mock import patch
 
-from httpx import AsyncClient,ASGITransport
+import pytest
+from httpx import ASGITransport, AsyncClient
 
 from app.main import app
 
-from unittest.mock import patch
 
 @pytest.mark.asyncio
 async def test_get_all_posts_end_point():

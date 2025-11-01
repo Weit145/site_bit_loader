@@ -10,8 +10,7 @@ from app.users.dependens import (
 from app.users.schemas import (
     UserResponse,
 )
-
-from app.users.services.user_service import UserService 
+from app.users.services.user_service import UserService
 
 router = APIRouter(prefix="/me")
 

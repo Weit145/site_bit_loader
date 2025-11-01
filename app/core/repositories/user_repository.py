@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 
-from typing import Optional
-
 from app.core.models import User
+
 
 class IUserRepository(ABC):
 
@@ -15,15 +14,15 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_user_by_username(self,username:str)->Optional[User]:
+    async def get_user_by_username(self,username:str)->User | None:
         pass
 
     @abstractmethod
-    async def get_user_by_email(self,email:str)->Optional[User]:
+    async def get_user_by_email(self,email:str)->User | None:
         pass
 
     @abstractmethod
-    async def get_user_by_id(self,id:int)->Optional[User]:
+    async def get_user_by_id(self,id:int)->User | None:
         pass
 
     @abstractmethod

@@ -1,7 +1,7 @@
+from app.core.config import settings
 from app.core.models import User
 from app.users.schemas import UserCreate
 
-from app.core.config import settings
 
 def add_password_userdb(user_create: UserCreate) -> User:
     hashed_password = get_password_hash(user_create.password)

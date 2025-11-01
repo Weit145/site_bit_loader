@@ -1,17 +1,13 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status, Path
+from fastapi import APIRouter, Depends, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
-from app.profiles.crud import clear_upload_dir
-from app.users import crud
 from app.users.schemas import (
-    UserGet,
     UserResponse,
 )
-
-from app.users.services.user_service import UserService 
+from app.users.services.user_service import UserService
 
 router = APIRouter(prefix="/admin")
 
@@ -28,9 +24,10 @@ async def dellete_all_no_comfirm_users_end_point(
 )->None:
     await UserService().dellete_all_no_comfirm_users(session)
 
-@router.get("/{user_id}/", response_model=UserGet)
+@router.get("/{user_id}/", response_model=UserResponse)
 async def get_user_by_id_end_point(
-    id: Annotated[int, Path(ge=1)],
+    user_id: Annotated[int, Path(ge=1)],
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> UserResponse:
-    return await UserService().get_user_by_id(id)
+    return await UserService().get_user_by_id(user_id, session)
 
