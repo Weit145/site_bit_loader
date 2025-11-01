@@ -90,7 +90,16 @@ def check_user(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
+    
+# Удаление всех не подтверждённых пользователей
 
+async def dellete_all_no_comfirm_users(session: AsyncSession)->None:
+    stm = select(User).where(User.active==0)
+    result: Result = await session.execute(stm)
+    users_db = list (result.scalars().all())
+    for user in users_db:
+        await session.delete(user)
+    await session.commit()
 
 # Удаление все (ВООБЩЕ ВСЕГО)
 
