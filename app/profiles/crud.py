@@ -8,14 +8,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.models import Profile
 from app.profiles.schemas import ProfileResponse
 from app.users.schemas import UserResponse
+from app.core.models import User
 
 # Создание профеля испотлбзуеться user/views.py
 
 
 async def check_profile_in_db_by_userid(
-    user: UserResponse,
+    user: User,
     session: AsyncSession,
-) -> UserResponse:
+) -> User:
     profile = await session.get(Profile, user.id)
     if profile:
         raise HTTPException(
@@ -26,7 +27,7 @@ async def check_profile_in_db_by_userid(
 
 
 async def create_profile(
-    user: Annotated[UserResponse, Depends(check_profile_in_db_by_userid)],
+    user: Annotated[User, Depends(check_profile_in_db_by_userid)],
     session: AsyncSession,
 ) -> None:
     profile = Profile(name_img="default.png", img=False, user_id=user.id)
