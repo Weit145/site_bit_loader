@@ -24,8 +24,16 @@ async def delete_all_users_end_point(
     await crud.delete_all_users(session=session)
     clear_upload_dir()
 
+@router.delete("/nocomfirm/",status_code = status.HTTP_204_NO_CONTENT)
+async def dellete_all_no_comfirm_users(
+    session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
+)->None:
+    await crud.dellete_all_no_comfirm_users(session=session)
+    pass
+
 @router.get("/{user_id}/", response_model=UserGet)
 async def get_user_by_id_end_point(
     user: Annotated[UserResponse, Depends(user_by_id_path)],
 ) -> UserResponse:
     return user
+
