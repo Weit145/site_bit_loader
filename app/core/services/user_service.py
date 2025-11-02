@@ -57,5 +57,6 @@ class SQLAlchemyUserRepository(IUserRepository):
 
     async def add_refresh_token(self,user:User, refresh_toket: str) -> None:
         user.refresh_token=refresh_toket
+        user.active = True
         await self.session.commit()
         await self.session.refresh(user)

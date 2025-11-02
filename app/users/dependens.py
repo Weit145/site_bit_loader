@@ -11,9 +11,9 @@ from app.users.utils import token
 from app.users.utils.checks import (
     check_email_reg,
     check_for_current,
-    check_for_regist,
     check_username_reg,
 )
+from app.users.utils.convert import convert_profiledb
 
 # Смотрит что человек создал акк но не подтвердил
 
@@ -21,10 +21,9 @@ async def dependens_chek_regist(
     user:UserCreate,
     session:Annotated[AsyncSession, Depends(db_helper.session_dependency)]
 )->User:
-    user_db = await SQLAlchemyUserRepository(session).get_user_by_email(user.email)
-    check_for_regist(user_db)
     await check_email_reg(user=user,session=session)
     await check_username_reg(user=user,session=session)
+    user_db = convert_profiledb(user)
     return user_db
 
 

@@ -9,10 +9,15 @@ class SQLAlchemyProfileRepository(IProfileRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create_profile(self, profile: Profile) -> None:
-        self.session.add(profile)
+    async def create_profile(self, user_id: int) -> None:
+        profile_db = Profile(
+            name_img = "default.png",
+            img = False,
+            user_id = user_id,
+        )
+        self.session.add(profile_db)
         await self.session.commit()
-        await self.session.refresh(profile)
+        await self.session.refresh(profile_db)
 
     async def update_profile(self, profile: Profile) -> Profile:
         await self.session.commit()

@@ -25,7 +25,7 @@ async def create_user_end_point(
 @router.get("/confirm/",status_code=status.HTTP_200_OK)
 async def registration_confirmation_end_point(
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
-    token: str = Query(..., description="Токен подтверждения регистрации"),
+    token_pod: str = Query(..., description="Токен подтверждения регистрации"),
 )->JSONResponse:
-    response = await UserService().registration_confirmation(session,token)
+    response = await UserService().registration_confirmation(session,token_pod)
     return response

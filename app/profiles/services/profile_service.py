@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import Profile, User
+from app.core.models import Profile
 from app.core.services.profile_servicr import SQLAlchemyProfileRepository
 from app.profiles.schemas import ProfileResponse
 from app.profiles.services.iprofile_service import IProfileService
@@ -10,10 +10,10 @@ from app.profiles.utils.convert import convert_profiledb
 
 class ProfileService(IProfileService):
 
-    async def create_profile(self, session: AsyncSession, user: User) -> None:
-        profile = await SQLAlchemyProfileRepository(session).get_profile(user.id)
+    async def create_profile(self, session: AsyncSession, user_id: int) -> None:
+        profile = await SQLAlchemyProfileRepository(session).get_profile(user_id)
         check_no_profile_in_db(profile)
-        await SQLAlchemyProfileRepository(session).create_profile(profile)
+        await SQLAlchemyProfileRepository(session).create_profile(user_id)
 
 
     # Me
