@@ -10,7 +10,7 @@ from app.users.utils.password import verify_password
 def check_for_regist(
     user_db:User|None,
 )->None:
-    if check_user(user_db) or check_no_active(user_db):
+    if user_db is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username no active email, send email",
@@ -35,9 +35,9 @@ def check_for_auth(
         )
 
 def check_no_active(
-    user_db:User,
+    user_db:User|None,
 )->None:
-    if user_db.active:
+    if check_user(user_db) or user_db.active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User is already active",
@@ -77,7 +77,7 @@ async def check_email_reg(
     user:UserCreate,
     session:AsyncSession
 )->None:
-    user_db = SQLAlchemyUserRepository(session).get_user_by_email(user.email)
+    user_db = await SQLAlchemyUserRepository(session).get_user_by_email(user.email)
     if user_db is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -89,7 +89,7 @@ async def check_username_reg(
     user: UserCreate,
     session: AsyncSession
 ) -> None:
-    user_db = SQLAlchemyUserRepository(session).get_user_by_username(user.username)
+    user_db = await SQLAlchemyUserRepository(session).get_user_by_username(user.username)
     if user_db is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

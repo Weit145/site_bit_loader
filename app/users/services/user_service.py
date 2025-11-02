@@ -11,7 +11,10 @@ from app.profiles.utils.dir import (
 )
 from app.users.schemas import Token, UserLogin, UserResponse
 from app.users.services.iuser_service import IUserService
-from app.users.utils.checks import check_for_auth
+from app.users.utils.checks import (
+    check_for_auth,
+    check_no_active,
+)
 from app.users.utils.send_email import send_email
 from app.users.utils.token import (
     create_access_token,
@@ -26,12 +29,13 @@ class UserService(IUserService):
     # Registration
     async def create_user(self, session: AsyncSession, user: User) -> None:
         await SQLAlchemyUserRepository(session).add_user(user)
-        await ProfileService().create_profile(session=session, user=user)
+        await ProfileService().create_profile(session=session, user_id=user.id)
         send_email(user)
 
     async def registration_confirmation(self, session: AsyncSession, token: str) -> JSONResponse:
         email = await decode_jwt_email(token=token)
         user_db = await SQLAlchemyUserRepository(session).get_user_by_email(email)
+        check_no_active(user_db)
         access_token = create_access_token(data={"sub": user_db.username})
         cookie = await create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
         response = JSONResponse(content={"access_token":access_token})
