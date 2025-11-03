@@ -117,7 +117,7 @@ function handleNameChange(v: string) {
     })
     try {
       const response = await api.post(
-        "http://127.0.0.1:8000/user/registration",
+        "http://127.0.0.1:8000/user/registration/",
         {
           username : name,
           password : password,
