@@ -4,7 +4,8 @@ import './index.css'
 import App from './App.tsx'
 import Login from "./pages/Login.tsx"
 import Register from "./pages/Register.tsx"
-import Confirm from './Confirm.tsx' 
+import Confirm from './pages/Confirm.tsx' 
+import Profile from './pages/Profile.tsx'
 
 import {BrowserRouter, Route, Routes} from "react-router"
 
@@ -30,6 +31,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/login' element ={<Login/>}/>
           <Route path='/register' element={<Register/>}/>
           <Route path='/confirm' element={<Confirm/>}/>
+          <Route path='/profile' element={<Profile/>}/>
       </Routes>
     
     </BrowserRouter>

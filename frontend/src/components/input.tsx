@@ -4,7 +4,6 @@ import '../App.css'
 
 export default function Input({children, type, flag_error, setValue, value, onBlur, touched = false, errorMessage=""}: {children:string, type:string, flag_error:boolean, setValue:(any), value:string, onBlur?:()=>void, touched?:boolean, errorMessage?:string}){
     function handleChange(event:any){
-        console.log(event.target.value)
         setValue(event.target.value)
     }
     function handleBlur() {

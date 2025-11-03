@@ -85,15 +85,9 @@ function handleNameChange(v: string) {
         }
       );
 
-      console.log("Ответ сервера:", JSON.stringify(response.data, null, 2));
     } catch (error: any) {
       console.error("Ошибка при отправке данных:", error.response?.data || error.message);
     }
-      console.log("Submit:", { name, password });
-      // alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
-
-  
-    
   }
 
   return (

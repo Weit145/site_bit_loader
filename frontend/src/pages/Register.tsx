@@ -6,7 +6,8 @@ import Button from "../components/button_handler";
 import "../components/button_handler.css";
 import Header from "../components/Header";
 import Input from '../components/input';
-import { Link } from "react-router";
+import api from "../api";
+import { Link} from "react-router";
 
 
 export default function Register() {
@@ -25,9 +26,7 @@ export default function Register() {
   const [touchedPassword, setTouchedPassword] = useState<boolean>(false);
   const [touchedPasswordConfirm, setTouchedPasswordConfirm] = useState<boolean>(false);
 
-  const [accessToken, setAccessToken] = useState<string>("");
-
-  const validateName = (v: string) => v.trim().length >= 3; // минимум 3 символов
+  const validateName = (v: string) => v.trim().length >= 4; // минимум 4 символов
   const validateEmail = (v: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(v);
@@ -109,18 +108,19 @@ function handleNameChange(v: string) {
       });
       return;
     }
+
+    //Используется на случай если бек принимает данные в формате application/x-www-form-urlencoded
     const params = new URLSearchParams({
       username : name,
       password : password,
       email:email,
     })
     try {
-      const response = await axios.post(
+      const response = await api.post(
         "http://127.0.0.1:8000/user/registration",
         {
-          params,
-          username: name,
-          password: password,
+          username : name,
+          password : password,
           email:email,
         },
         {
@@ -129,17 +129,17 @@ function handleNameChange(v: string) {
           },
         }
       );
-
-      console.log("Ответ сервера:", JSON.stringify(response.data, null, 2));
     } catch (error: any) {
       console.error("Ошибка при отправке данных:", error.response?.data || error.message);
+      const serverMessage = error.response?.data;
+      if (serverMessage?.details){
+        alert(`Ошибка регистрации:\n${serverMessage.details.join("\n")}`);
+      }
     }
-      console.log("Submit:", { name, password });
       // alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
-
-  
     
-  }
+    }
+
 
   return (
     <div>
@@ -159,7 +159,7 @@ function handleNameChange(v: string) {
               flag_error={flag_name_error}
               onBlur={handleNameBlur}
               touched={touchedName}
-              errorMessage="Имя должно содержать не менее 3 символов"
+              errorMessage="Имя должно содержать не менее 4 символов"
             >Логин</Input>
 
             <Input
@@ -191,10 +191,11 @@ function handleNameChange(v: string) {
               touched={touchedPasswordConfirm}
               errorMessage="Пароли не совпадают"
             >Подтвердите пароль</Input>
-
-            <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_email_error || flag_name_error || flag_password_confirm_error || flag_password_error}>
-              Подтвердить
-            </Button>
+            {/* <Link to = "/"> */}
+              <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_email_error || flag_name_error || flag_password_confirm_error || flag_password_error}>
+                Подтвердить
+              </Button>
+            {/* </Link> */}
             <Link to ="/login">
               <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
               Войти
