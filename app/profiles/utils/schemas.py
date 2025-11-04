@@ -10,3 +10,7 @@ class ProfileResponse(ProfileBase):
     model_config = ConfigDict(from_attributes=True)
     user_id: int
     id: int
+
+class ProfileOut(ProfileBase):
+    username: str
+    user_id: int

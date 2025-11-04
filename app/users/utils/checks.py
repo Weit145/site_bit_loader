@@ -2,10 +2,10 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User
-from app.core.services.user_service import SQLAlchemyUserRepository
 from app.core.security.password import verify_password
+from app.core.services.user_service import SQLAlchemyUserRepository
+from app.users.utils.schemas import UserCreate
 
-from app.users.schemas import UserCreate
 
 def check_for_regist(
     user_db:User|None,
@@ -15,7 +15,7 @@ def check_for_regist(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username no active email, send email",
         )
-        
+
 def check_for_auth(
     user_db:User|None,
     password: str,
@@ -86,4 +86,13 @@ async def check_username_reg(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered",
+        )
+
+def check_user_by_id(
+    user_db: User | None,
+    id:int,
+) -> None:
+    if user_db is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"User {id} not found"
         )

@@ -5,19 +5,19 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
-from app.users.dependens import (
-    user_form_to_user_login,
+from app.users.services.user_service import UserService
+from app.users.utils.dependens import (
+    dependens_user_form_to_user_login,
 )
-from app.users.schemas import (
+from app.users.utils.schemas import (
     Token,
     UserLogin,
 )
-from app.users.services.user_service import UserService
 
 router = APIRouter(prefix="/auth")
 
-@router.get("/refresh/", response_model=Token)
-async def refresh_token_end_point(
+@router.get("/refresh/", response_model=Token, status_code=status.HTTP_200_OK)
+async def refresh_access_token_end_point(
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
     refresh_token: Annotated[str,Cookie(...)]
 )->Token:
@@ -25,9 +25,9 @@ async def refresh_token_end_point(
     return token
 
 @router.post("/token/", status_code=status.HTTP_200_OK)
-async def login_for_access_token_end_point(
-    user: Annotated[UserLogin, Depends(user_form_to_user_login)],
+async def authenticate_user_end_point(
+    user: Annotated[UserLogin, Depends(dependens_user_form_to_user_login)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> JSONResponse:
-    response = await UserService().login_for_access(user,session)
+    response = await UserService().authenticate_user(user,session)
     return response

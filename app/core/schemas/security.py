@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Cookies(BaseModel):
     key:str
     value:str

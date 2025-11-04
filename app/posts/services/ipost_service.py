@@ -2,24 +2,23 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import Post
-from app.posts.schemas import (
+from app.core.models import Post, User
+from app.posts.utils.schemas import (
     CreatePost,
     OutPost,
     UpdatePost,
 )
-from app.users.schemas import UserResponse
 
 
 class IPostService(ABC):
 
     # Post
     @abstractmethod
-    async def create_post(self, session: AsyncSession, post: CreatePost, current_user: UserResponse) -> OutPost:
+    async def create_post(self, session: AsyncSession, post: CreatePost, current_user: User) -> OutPost:
         pass
 
     @abstractmethod
-    async def delete_postdb_by_id(self, current_user: UserResponse, post_db: Post, session: AsyncSession) -> None:
+    async def delete_post(self, current_user: User, post_db: Post, session: AsyncSession) -> None:
         pass
 
     @abstractmethod

@@ -1,26 +1,31 @@
 
-from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User
-from app.core.services.user_service import SQLAlchemyUserRepository
-from app.core.security.token import (
-    create_access_token,
-    decode_jwt_email,
-    update_token,
-    build_auth_response,
-)
-
-from app.profiles.services.profile_service import ProfileService
-from app.profiles.utils.dir import (
+from app.core.security.file import (
     clear_upload_dir,
 )
-from app.users.utils.schemas import Token, UserLogin, UserResponse
+from app.core.security.token import (
+    build_auth_response,
+    create_access_token,
+    decode_jwt_email,
+    valid_refresh_token,
+)
+from app.core.services.user_service import SQLAlchemyUserRepository
 from app.users.services.iuser_service import IUserService
 from app.users.utils.checks import (
     check_for_auth,
     check_no_active,
+    check_user_by_id,
+)
+from app.users.utils.convert import (
+    convert_user_to_out,
+)
+from app.users.utils.schemas import (
+    OutUser,
+    Token,
+    UserLogin,
 )
 from app.users.utils.send_email import send_email
 
@@ -30,7 +35,6 @@ class UserService(IUserService):
     # Registration
     async def create_user(self, session: AsyncSession, user: User) -> None:
         await SQLAlchemyUserRepository(session).add_user(user)
-        await ProfileService().create_profile(session=session, user_id=user.id)
         send_email(user)
 
     async def registration_confirmation(self, session: AsyncSession, token: str) -> JSONResponse:
@@ -43,11 +47,11 @@ class UserService(IUserService):
 
     # Auth
     async def refresh_token(self, session: AsyncSession, refresh_token: str) -> Token:
-        username = update_token(session,refresh_token)
+        username = valid_refresh_token(session,refresh_token)
         access_token = create_access_token({"sub": username})
         return Token(access_token=access_token,token_type="bearer")
 
-    async def login_for_access(self, user: UserLogin, session: AsyncSession) -> JSONResponse:
+    async def authenticate_user(self, user: UserLogin, session: AsyncSession) -> JSONResponse:
         user_db = await SQLAlchemyUserRepository(session).get_user_by_username(user.username)
         check_for_auth(user_db,user_db.password)
         response = await build_auth_response(session=session, user_db=user_db)
@@ -57,8 +61,8 @@ class UserService(IUserService):
     async def delete_me_user(self, current_user: User, session: AsyncSession) -> None:
         await SQLAlchemyUserRepository(session).delete_user(current_user)
 
-    async def read_me_user(self, current_user: User) -> User:
-        return current_user
+    async def read_me_user(self, current_user: User) -> OutUser:
+        return convert_user_to_out(current_user)
 
 
     #Admin
@@ -69,12 +73,9 @@ class UserService(IUserService):
     async def dellete_all_no_comfirm_users(self, session: AsyncSession) -> None:
         await SQLAlchemyUserRepository(session).delete_no_comfirm_users()
 
-    async def  get_user_by_id(self, user_id: int, session: AsyncSession) -> UserResponse:
+    async def  get_user_by_id(self, user_id: int, session: AsyncSession) -> OutUser:
         user_db = await SQLAlchemyUserRepository(session).get_user_by_id(user_id)
-        if user_db is not None:
-            return UserResponse.model_validate(user_db)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found"
-        )
+        check_user_by_id(user_db, user_id)
+        return convert_user_to_out(user_db)
 
-    
+

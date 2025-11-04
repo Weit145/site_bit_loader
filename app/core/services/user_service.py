@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import User
+from app.core.models import Profile, User
 from app.core.repositories.user_repository import IUserRepository
 
 
@@ -10,6 +10,7 @@ class SQLAlchemyUserRepository(IUserRepository):
         self.session=session
 
     async def add_user(self, user: User) -> User:
+        user.profile = Profile(name_img="default.png", img=False)
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)
@@ -17,7 +18,9 @@ class SQLAlchemyUserRepository(IUserRepository):
 
     async def activate_user(self, user: User) -> None:
         user.active=True
+        self.session.add(user)
         await self.session.commit()
+        await self.session.refresh(user)
 
     async def get_user_by_username(self, username: str) -> User | None:
         stmt  = select(User).where(User.username==username)

@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User
-from app.users.schemas import (
+from app.users.utils.schemas import (
     Token,
     UserLogin,
     UserResponse,
@@ -29,7 +29,7 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    async def login_for_access(self,user:UserLogin,session:AsyncSession)->JSONResponse:
+    async def authenticate_user(self,user:UserLogin,session:AsyncSession)->JSONResponse:
         pass
 
 
