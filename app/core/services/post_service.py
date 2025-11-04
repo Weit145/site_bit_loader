@@ -16,7 +16,7 @@ class SQLAlchemyPostRepository(IPostRepository):
         await self.session.commit()
         await self.session.refresh(post)
 
-    async def dellete_all_posts(self)->None:
+    async def delete_all_posts(self)->None:
         stm = select(Post).order_by(Post.id)
         result = await self.session.execute(stm)
         posts = result.scalars().all()
@@ -24,7 +24,7 @@ class SQLAlchemyPostRepository(IPostRepository):
             await self.session.delete(post)
         await self.session.commit()
 
-    async def dellete_post(self, post: Post)->None:
+    async def delete_post(self, post: Post)->None:
         await self.session.delete(post)
         await self.session.commit()
 

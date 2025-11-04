@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User
 from app.core.models.db_hellper import db_helper
-from app.users.dependens import (
+from app.users.services.user_service import UserService
+from app.users.utils.dependens import (
     dependens_chek_regist,
 )
-from app.users.services.user_service import UserService
 
 router = APIRouter(prefix="/registration")
 

@@ -9,29 +9,21 @@ class SQLAlchemyProfileRepository(IProfileRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create_profile(self, user_id: int) -> None:
-        profile_db = Profile(
-            name_img = "default.png",
-            img = False,
-            user_id = user_id,
-        )
-        self.session.add(profile_db)
-        await self.session.commit()
-        await self.session.refresh(profile_db)
-
     async def update_profile(self, profile: Profile) -> Profile:
+        updated_profile = await self.session.merge(profile)
         await self.session.commit()
-        await self.session.refresh(profile)
-        return profile
+        await self.session.refresh(updated_profile)
+        return updated_profile
 
     async def reset_profile(self, profile: Profile) -> Profile:
         profile.name_img = "default.png"
         profile.img = False
+        await self.session.add(profile)
         await self.session.commit()
         await self.session.refresh(profile)
         return profile
 
-    async def reset_all_profile(self) -> None:
+    async def reset_all_profiles(self) -> None:
         stm = select(Profile).where(Profile.img == 1)
         result = await self.session.execute(stm)
         profile_db = list(result.scalars().all())
@@ -48,3 +40,6 @@ class SQLAlchemyProfileRepository(IProfileRepository):
 
     async def get_profile(self, profile_id: int) -> Profile | None:
         return await self.session.get(Profile, profile_id)
+
+    async def get_profile_by_user_id(self, user_id: int) -> Profile | None:
+        return await self.session.execute(select(Profile).where(Profile.user_id == user_id))

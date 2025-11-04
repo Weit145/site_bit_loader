@@ -3,8 +3,8 @@ from pathlib import Path
 
 from fastapi import HTTPException, UploadFile, status
 
-from app.profiles.utils.checks import check_name_file
-from app.users.schemas import UserResponse
+from app.core.models import User
+from app.core.security.checks import check_name_file
 
 
 def clear_upload_dir() -> None:
@@ -33,7 +33,7 @@ def upload_dir() -> Path:
 
 def file_extension(
     file: UploadFile,
-    current_user: UserResponse,
+    current_user: User,
 ) -> str:
     check_name_file(file)
     Extension = Path(file.filename).suffix.lower()

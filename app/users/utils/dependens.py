@@ -5,14 +5,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User, db_helper
-from app.users.utils.schemas import UserCreate, UserLogin
 from app.users.utils.checks import (
     check_email_reg,
     check_username_reg,
 )
 from app.users.utils.convert import convert_profiledb
+from app.users.utils.schemas import UserCreate, UserLogin
 
-# Смотрит что человек создал акк но не подтвердил
+# Уникальность ника, почты
 
 async def dependens_chek_regist(
     user:UserCreate,

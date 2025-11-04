@@ -1,5 +1,7 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, UploadFile, status
+
 from app.core.models import User
+
 
 def check_valid_refresh_token(
     result:bool,
@@ -20,7 +22,7 @@ def check_access_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid access token",
         )
-        
+
 def check_for_current(
     user_db:User|None,
 )->None:
@@ -28,4 +30,12 @@ def check_for_current(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username no active email, send email",
+        )
+
+def check_name_file(
+    file: UploadFile,
+) -> None:
+    if file.filename is None or not file.filename.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file name"
         )

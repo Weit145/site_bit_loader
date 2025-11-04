@@ -6,10 +6,6 @@ from app.core.models import Profile
 class IProfileRepository(ABC):
 
     @abstractmethod
-    async def create_profile(self, user_id : int) -> None:
-        pass
-
-    @abstractmethod
     async def update_profile(self, profile: Profile) -> Profile:
         pass
 
@@ -18,7 +14,7 @@ class IProfileRepository(ABC):
         pass
 
     @abstractmethod
-    async def reset_all_profile(self) -> None:
+    async def reset_all_profiles(self) -> None:
         pass
 
     @abstractmethod

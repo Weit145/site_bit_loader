@@ -1,28 +1,25 @@
 from datetime import UTC, datetime, timedelta
+from typing import Annotated
 
 import jwt
-from jwt.exceptions import InvalidTokenError
 from fastapi import Depends
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
-
+from jwt.exceptions import InvalidTokenError
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Annotated
+
 from app.core.config import settings
 from app.core.models.user import User
-from app.core.services.user_service import SQLAlchemyUserRepository
 from app.core.schemas.security import Cookies
 from app.core.security.checks import (
-    check_valid_refresh_token,
     check_access_token,
+    check_valid_refresh_token,
 )
-from app.core.security.password import(
+from app.core.security.password import (
     get_password_hash,
     verify_password,
 )
-from app.core.security.token import(
-    decode_jwt_username,
-)
+from app.core.services.user_service import SQLAlchemyUserRepository
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/auth/token")
 
@@ -62,7 +59,7 @@ async def create_refresh_token(session: AsyncSession,data:dict, user_db:User) ->
     return cookie
 
 
-async def update_token(session: AsyncSession,refresh_token:str):
+async def valid_refresh_token(session: AsyncSession,refresh_token:str):
     username = await decode_jwt_username(refresh_token)
     usr_db = await SQLAlchemyUserRepository(session).get_user_by_username(username)
     result = verify_password(refresh_token,usr_db.refresh_token)

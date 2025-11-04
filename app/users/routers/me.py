@@ -8,10 +8,8 @@ from app.core.models.db_hellper import db_helper
 from app.core.security.dependens import (
     get_current_user,
 )
-from app.users.utils.schemas import (
-    UserResponse,
-)
 from app.users.services.user_service import UserService
+from app.users.utils.schemas import OutUser
 
 router = APIRouter(prefix="/me")
 
@@ -22,8 +20,8 @@ async def delete_me_user_end_point(
 ) -> None:
     await UserService().delete_me_user(current_user,session)
 
-@router.get("/", response_model=UserResponse)
+@router.get("/", response_model=OutUser)
 async def read_me_user_end_point(
-    current_user: Annotated[UserResponse, Depends(get_current_user)],
-) -> UserResponse:
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> OutUser:
     return await UserService().read_me_user(current_user)

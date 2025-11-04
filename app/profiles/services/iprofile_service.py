@@ -3,15 +3,10 @@ from abc import ABC, abstractmethod
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import Profile
-from app.profiles.schemas import ProfileResponse
+from app.profiles.utils.schemas import ProfileResponse
 
 
 class IProfileService(ABC):
-
-
-    @abstractmethod
-    async def create_profile(self, session: AsyncSession, user_id: int) -> None:
-        pass
 
     # Me
     @abstractmethod
