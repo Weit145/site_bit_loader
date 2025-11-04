@@ -1,10 +1,8 @@
 from datetime import UTC, datetime, timedelta
-from typing import Annotated
 
 import jwt
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
+from fastapi.responses import JSONResponse
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -12,12 +10,30 @@ from app.core.models.user import User
 from app.core.services.user_service import SQLAlchemyUserRepository
 from app.users.schemas import Cookies
 from app.users.utils.checks import (
-    check_access_token,
     check_valid_refresh_token,
 )
+from app.users.utils.security import(
+    get_password_hash,
+    verify_password,
+    decode_jwt_username,
+)
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/auth/token")
 
+
+
+async def build_auth_response(session: AsyncSession, user_db: User) -> JSONResponse:
+    access_token = create_access_token(data={"sub": user_db.username})
+    cookie = await create_refresh_token(session=session, data={"sub": user_db.username}, user_db=user_db)
+    response = JSONResponse(content={"access_token": access_token})
+    response.set_cookie(
+        key=cookie.key,
+        value=cookie.value,
+        httponly=cookie.httponly,
+        secure=cookie.secure,
+        samesite=cookie.samesite,
+        max_age=cookie.max_age,
+    )
+    return response
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
@@ -40,38 +56,13 @@ async def create_refresh_token(session: AsyncSession,data:dict, user_db:User) ->
     cookie = Cookies(key="refresh_token", value=encoded_jwt)
     return cookie
 
-def get_password_hash(password) -> str:
-    return settings.pwd_context.hash(password)
 
 async def update_token(session: AsyncSession,refresh_token:str):
-    username = await decode_jwt_email(refresh_token)
+    username = await decode_jwt_username(refresh_token)
     usr_db = await SQLAlchemyUserRepository(session).get_user_by_username(username)
     result = verify_password(refresh_token,usr_db.refresh_token)
     check_valid_refresh_token(result)
     return username
 
-def verify_password(plain_password, hashed_password) -> bool:
-    return settings.pwd_context.verify(plain_password, hashed_password)
 
-async def decode_jwt_username(
-    token: Annotated[str, Depends(oauth2_scheme)],
-):
-    try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
-        username = payload.get("sub")
-        check_access_token(username)
-        return username
-    except InvalidTokenError:
-        check_access_token(None)
-
-async def decode_jwt_email(
-    token: str,
-)->str|None:
-    try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
-        email = payload.get("sub")
-        check_access_token(email)
-        return email
-    except InvalidTokenError:
-        check_access_token(None)
 
