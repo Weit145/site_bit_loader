@@ -1,25 +1,30 @@
 from datetime import UTC, datetime, timedelta
 
 import jwt
+from jwt.exceptions import InvalidTokenError
+from fastapi import Depends
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
 
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from typing import Annotated
 from app.core.config import settings
 from app.core.models.user import User
 from app.core.services.user_service import SQLAlchemyUserRepository
-from app.users.schemas import Cookies
-from app.users.utils.checks import (
+from app.core.schemas.security import Cookies
+from app.core.security.checks import (
     check_valid_refresh_token,
+    check_access_token,
 )
-from app.users.utils.security import(
+from app.core.security.password import(
     get_password_hash,
     verify_password,
+)
+from app.core.security.token import(
     decode_jwt_username,
 )
 
-
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/auth/token")
 
 async def build_auth_response(session: AsyncSession, user_db: User) -> JSONResponse:
     access_token = create_access_token(data={"sub": user_db.username})
@@ -66,3 +71,24 @@ async def update_token(session: AsyncSession,refresh_token:str):
 
 
 
+async def decode_jwt_username(
+    token: Annotated[str, Depends(oauth2_scheme)],
+):
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        username = payload.get("sub")
+        check_access_token(username)
+        return username
+    except InvalidTokenError:
+        check_access_token(None)
+
+async def decode_jwt_email(
+    token: str,
+)->str|None:
+    try:
+        payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
+        email = payload.get("sub")
+        check_access_token(email)
+        return email
+    except InvalidTokenError:
+        check_access_token(None)

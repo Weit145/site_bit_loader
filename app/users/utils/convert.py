@@ -1,7 +1,6 @@
 from app.core.models import User
-from app.users.schemas import UserCreate
-from app.users.utils.password import get_password_hash
-
+from app.core.security.password import get_password_hash
+from app.users.utils.schemas import UserCreate
 
 def convert_profiledb(user: UserCreate)->User:
     user_db=User(
