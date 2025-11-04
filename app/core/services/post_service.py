@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import Post
 from app.core.repositories.post_repository import IPostRepository
-from app.posts.schemas import UpdatePost
+from app.core.schemas.post import UpdatePost
 
 
 class SQLAlchemyPostRepository(IPostRepository):

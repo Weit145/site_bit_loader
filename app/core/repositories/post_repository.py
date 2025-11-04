@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from app.core.models import Post
-from app.posts.schemas import UpdatePost
+from app.core.schemas.post import UpdatePost
 
 
 class IPostRepository(ABC):

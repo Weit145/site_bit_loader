@@ -5,23 +5,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User
 from app.core.services.user_service import SQLAlchemyUserRepository
+from app.core.security.token import (
+    create_access_token,
+    decode_jwt_email,
+    update_token,
+    build_auth_response,
+)
+
 from app.profiles.services.profile_service import ProfileService
 from app.profiles.utils.dir import (
     clear_upload_dir,
 )
-from app.users.schemas import Token, UserLogin, UserResponse
+from app.users.utils.schemas import Token, UserLogin, UserResponse
 from app.users.services.iuser_service import IUserService
 from app.users.utils.checks import (
     check_for_auth,
     check_no_active,
 )
 from app.users.utils.send_email import send_email
-from app.users.utils.token import (
-    create_access_token,
-    decode_jwt_email,
-    update_token,
-    build_auth_response,
-)
 
 
 class UserService(IUserService):
@@ -53,11 +54,10 @@ class UserService(IUserService):
         return response
 
     # Me
-    async def delete_me_user(self, current_user: UserResponse, session: AsyncSession) -> None:
-        user_db = await SQLAlchemyUserRepository(session).get_user_by_id(current_user.id)
-        await SQLAlchemyUserRepository(session).delete_user(user_db)
+    async def delete_me_user(self, current_user: User, session: AsyncSession) -> None:
+        await SQLAlchemyUserRepository(session).delete_user(current_user)
 
-    async def read_me_user(self, current_user: UserResponse) -> UserResponse:
+    async def read_me_user(self, current_user: User) -> User:
         return current_user
 
 
