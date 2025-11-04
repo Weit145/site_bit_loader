@@ -18,9 +18,9 @@ from app.users.utils.checks import (
 from app.users.utils.send_email import send_email
 from app.users.utils.token import (
     create_access_token,
-    create_refresh_token,
     decode_jwt_email,
     update_token,
+    build_auth_response,
 )
 
 
@@ -36,17 +36,7 @@ class UserService(IUserService):
         email = await decode_jwt_email(token=token)
         user_db = await SQLAlchemyUserRepository(session).get_user_by_email(email)
         check_no_active(user_db)
-        access_token = create_access_token(data={"sub": user_db.username})
-        cookie = await create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
-        response = JSONResponse(content={"access_token":access_token})
-        response.set_cookie(
-            key=cookie.key,
-            value=cookie.value,
-            httponly=cookie.httponly,
-            secure=cookie.secure,
-            samesite=cookie.samesite,
-            max_age=cookie.max_age
-        )
+        response = await build_auth_response(session=session, user_db=user_db)
         return response
 
 
@@ -59,22 +49,12 @@ class UserService(IUserService):
     async def login_for_access(self, user: UserLogin, session: AsyncSession) -> JSONResponse:
         user_db = await SQLAlchemyUserRepository(session).get_user_by_username(user.username)
         check_for_auth(user_db,user_db.password)
-        access_token = create_access_token(data={"sub": user_db.username})
-        cookie = await create_refresh_token(session=session,data={"sub": user_db.username},user_db=user_db)
-        response = JSONResponse(content={"access_token":access_token})
-        response.set_cookie(
-            key=cookie.key,
-            value=cookie.value,
-            httponly=cookie.httponly,
-            secure=cookie.secure,
-            samesite=cookie.samesite,
-            max_age=cookie.max_age
-        )
+        response = await build_auth_response(session=session, user_db=user_db)
         return response
 
     # Me
     async def delete_me_user(self, current_user: UserResponse, session: AsyncSession) -> None:
-        user_db = SQLAlchemyUserRepository(session).get_user_by_id(current_user.id)
+        user_db = await SQLAlchemyUserRepository(session).get_user_by_id(current_user.id)
         await SQLAlchemyUserRepository(session).delete_user(user_db)
 
     async def read_me_user(self, current_user: UserResponse) -> UserResponse:
@@ -96,3 +76,5 @@ class UserService(IUserService):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found"
         )
+
+    
