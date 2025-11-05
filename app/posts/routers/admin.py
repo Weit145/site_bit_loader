@@ -12,4 +12,4 @@ router = APIRouter(prefix="/admin")
 async def dellete_all_posts_end_point(
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],
 ) -> None:
-    return await PostService().delete_all_posts(session=session)
+    await PostService().delete_all_posts(session=session)

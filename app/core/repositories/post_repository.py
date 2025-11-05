@@ -18,7 +18,7 @@ class IPostRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_all_posts(self) -> list[Post|None]:
+    async def get_all_posts(self) -> list[Post]:
         pass
 
     @abstractmethod

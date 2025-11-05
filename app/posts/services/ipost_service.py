@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import Post, User
+from app.core.schemas.post import UpdatePost
 from app.posts.utils.schemas import (
     CreatePost,
     OutPost,
-    UpdatePost,
 )
 
 
@@ -36,5 +36,5 @@ class IPostService(ABC):
 
     # Admin
     @abstractmethod
-    async def dellete_all_posts(self, session: AsyncSession) -> None:
+    async def delete_all_posts(self, session: AsyncSession) -> None:
         pass

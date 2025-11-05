@@ -4,10 +4,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models.db_hellper import db_helper
-from app.core.models.post import (
-    Post,
-    User,
-)
+from app.core.models.post import Post
+from app.core.models.user import User
+from app.core.schemas.post import UpdatePost
 from app.core.security.dependens import get_current_user
 from app.posts.services.post_service import PostService
 from app.posts.utils.dependens import (
@@ -17,7 +16,6 @@ from app.posts.utils.dependens import (
 from app.posts.utils.schemas import (
     CreatePost,
     OutPost,
-    UpdatePost,
 )
 
 router = APIRouter()

@@ -25,7 +25,7 @@ async def profile_by_id(
     profile_id: Annotated[int, Path(ge=1)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> ProfileResponse:
-    profile_db = await SQLAlchemyProfileRepository.get_profile_by_id(profile_id, session)
+    profile_db = await SQLAlchemyProfileRepository(session).get_profile(profile_id)
     check_profile(profile_db)
     return convert_profiledb(profile_db)
 
@@ -33,7 +33,7 @@ async def profiledb_by_userid(
     current_user: Annotated[User, Depends(get_current_user)],
     session: AsyncSession = Depends(db_helper.session_dependency),
 ) -> Profile:
-    profile_db = await SQLAlchemyProfileRepository.get_profile_by_user_id(current_user.id, session)
+    profile_db = await SQLAlchemyProfileRepository(session).get_profile_by_user_id(current_user.id)
     check_profile(profile_db)
     return profile_db
 

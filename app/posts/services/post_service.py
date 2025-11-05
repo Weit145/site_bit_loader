@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models.post import Post, User
+from app.core.models.post import Post
+from app.core.models.user import User
 from app.core.services.post_service import SQLAlchemyPostRepository
+from app.core.schemas.post import UpdatePost
 from app.posts.services.ipost_service import IPostService
 from app.posts.utils.checks import (
     check_post_owner,
@@ -14,7 +16,6 @@ from app.posts.utils.converter import (
 from app.posts.utils.schemas import (
     CreatePost,
     OutPost,
-    UpdatePost,
 )
 
 
