@@ -7,7 +7,7 @@ from app.core.models import User
 from app.users.utils.schemas import (
     Token,
     UserLogin,
-    UserResponse,
+    OutUser,
 )
 
 
@@ -35,11 +35,11 @@ class IUserService(ABC):
 
     # Me
     @abstractmethod
-    async def delete_me_user(self,current_user:UserResponse,session:AsyncSession)->None:
+    async def delete_me_user(self,current_user:User,session:AsyncSession)->None:
         pass
 
     @abstractmethod
-    async def read_me_user(self, current_user:UserResponse)->UserResponse:
+    async def read_me_user(self, current_user:User)->OutUser:
         pass
 
 
@@ -53,5 +53,5 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    async def get_user_by_id(self, user_id: int, session: AsyncSession) -> UserResponse:
+    async def get_user_by_id(self, user_id: int, session: AsyncSession) -> OutUser:
         pass

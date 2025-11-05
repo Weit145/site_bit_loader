@@ -28,7 +28,7 @@ class SQLAlchemyPostRepository(IPostRepository):
         await self.session.delete(post)
         await self.session.commit()
 
-    async def get_all_posts(self) -> list[Post|None]:
+    async def get_all_posts(self) -> list[Post]:
         stm = select(Post).order_by(Post.id)
         result = await self.session.execute(stm)
         posts_db = list(result.scalars().all())
@@ -39,10 +39,11 @@ class SQLAlchemyPostRepository(IPostRepository):
             update(Post)
             .where(Post.id == post_to_redact.id)
             .values(**post.model_dump(exclude={"post_id"}))
+            .returning(Post)
         )
-        await self.session.execute(stmt)
+        result = await self.session.execute(stmt)
         await self.session.commit()
-        return stmt
+        return result.scalar_one()
 
     async def get_post_by_id(self, post_id: int) -> Post | None:
         return await self.session.get(Post, post_id)

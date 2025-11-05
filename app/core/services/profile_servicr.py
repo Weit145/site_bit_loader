@@ -18,7 +18,6 @@ class SQLAlchemyProfileRepository(IProfileRepository):
     async def reset_profile(self, profile: Profile) -> Profile:
         profile.name_img = "default.png"
         profile.img = False
-        await self.session.add(profile)
         await self.session.commit()
         await self.session.refresh(profile)
         return profile
@@ -42,4 +41,6 @@ class SQLAlchemyProfileRepository(IProfileRepository):
         return await self.session.get(Profile, profile_id)
 
     async def get_profile_by_user_id(self, user_id: int) -> Profile | None:
-        return await self.session.execute(select(Profile).where(Profile.user_id == user_id))
+        result = await self.session.execute(select(Profile).where(Profile.user_id == user_id))
+        return result.scalar_one_or_none()
+    

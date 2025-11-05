@@ -1,6 +1,6 @@
 from app.core.models import User
 from app.core.security.token import create_access_token
-from app.core.tasks.email.email import send_message
+from app.core.tasks.tasks import send_message
 
 
 def send_email(user:User)->None:

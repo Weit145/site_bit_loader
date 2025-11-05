@@ -3,9 +3,9 @@ from celery import Celery
 from app.core.config import settings
 
 app = Celery(
-    "app",
+    "app/core",
     broker = settings.broker,
     backend="rpc://",
 )
 
-app.autodiscover_tasks(["app.tasks"])
+app.autodiscover_tasks(["app.core.tasks"])

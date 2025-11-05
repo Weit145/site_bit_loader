@@ -39,3 +39,12 @@ def check_name_file(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file name"
         )
+
+def check_user(
+    user_db: User | None,
+) -> None:
+    if user_db is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="User not found"
+        )

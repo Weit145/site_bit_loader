@@ -15,7 +15,7 @@ services:
   celery:
     build: .
     container_name: celery
-    command: poetry run celery -A app.tasks.celery.app worker --loglevel=info
+    command: poetry run celery -A app.core.tasks.celery.app worker --loglevel=info
     volumes:
       - .:/app
     depends_on:

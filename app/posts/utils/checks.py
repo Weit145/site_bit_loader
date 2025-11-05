@@ -1,6 +1,8 @@
+from typing import List
 from fastapi import HTTPException, status
 
-from app.core.models.post import Post, User
+from app.core.models.post import Post
+from app.core.models.user import User
 
 
 def check_post_owner(post_db: Post, username: str)->None:
@@ -16,6 +18,7 @@ def check_post(post_db:Post)->None:
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Post not found"
         )
+    
 
 def check_post_and_user_correct(
     post:Post,

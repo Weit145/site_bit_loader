@@ -19,7 +19,7 @@ async def update_profile_end_point(
 ) -> ProfileOut:
     return await ProfileService().update_profile(session=session, profile=profile, new_profile=new_profile)
 
-@router.put("/reset/", status_code=status.HTTP_205_RESET_CONTENT)
+@router.put("/reset/", status_code=status.HTTP_200_OK)
 async def reset_me_end_point(
     profile: Annotated[Profile, Depends(profiledb_by_userid)],
     session: Annotated[AsyncSession, Depends(db_helper.session_dependency)],

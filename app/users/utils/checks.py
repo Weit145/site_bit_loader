@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.models import User
 from app.core.security.password import verify_password
+from app.core.security.checks import check_user
 from app.core.services.user_service import SQLAlchemyUserRepository
 from app.users.utils.schemas import UserCreate
 
@@ -43,14 +44,6 @@ def check_active(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User is not active",
             headers={"WWW-Authenticate": "Bearer"},
-        )
-
-def check_user(
-    user_db: User | None,
-) -> None:
-    if user_db is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
 
 

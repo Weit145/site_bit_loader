@@ -1,5 +1,4 @@
 from app.core.models import Post
-from app.posts.utils.checks import check_post
 from app.posts.utils.schemas import (
     CreatePost,
     OutPost,
@@ -23,8 +22,7 @@ def converter_postdb_to_post_out_list(
     return new_posts
 
 
-def converter_postdb_to_post_out(post_db: Post | None) -> OutPost:
-    check_post(post_db)
+def converter_postdb_to_post_out(post_db: Post) -> OutPost:
     return OutPost(
         title=post_db.title,
         body=post_db.body,

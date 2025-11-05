@@ -12,7 +12,7 @@ async def check_no_profile_in_db(
             detail="Profile already exists for this user",
         )
 
-def check_profile(profile: Profile) -> None:
+def check_profile(profile: Profile|None) -> None:
     if profile is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

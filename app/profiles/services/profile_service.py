@@ -15,13 +15,13 @@ class ProfileService(IProfileService):
     async def read_me_profile(self, profile: Profile) -> ProfileOut:
         return convert_profiledb_to_out(profile)
 
-    async def update_profile(self, session: AsyncSession, profile: Profile, new_profile: Profile) -> ProfileOut:
-        await SQLAlchemyProfileRepository(session).update_profile(profile, new_profile)
+    async def update_profile(self, session: AsyncSession, new_profile: Profile) -> ProfileOut:
+        await SQLAlchemyProfileRepository(session).update_profile(new_profile)
         return convert_profiledb_to_out(new_profile)
 
     async def reset_me(self, session: AsyncSession, profile: Profile) -> ProfileOut:
         await SQLAlchemyProfileRepository(session).reset_profile(profile)
-
+        return convert_profiledb_to_out(profile)
 
     # Admin
     async def reset_all_profiles(self, session: AsyncSession) -> None:

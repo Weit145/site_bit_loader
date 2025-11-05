@@ -14,6 +14,7 @@ from app.core.schemas.security import Cookies
 from app.core.security.checks import (
     check_access_token,
     check_valid_refresh_token,
+    check_user,
 )
 from app.core.security.password import (
     get_password_hash,
@@ -62,6 +63,7 @@ async def create_refresh_token(session: AsyncSession,data:dict, user_db:User) ->
 async def valid_refresh_token(session: AsyncSession,refresh_token:str):
     username = await decode_jwt_username(refresh_token)
     usr_db = await SQLAlchemyUserRepository(session).get_user_by_username(username)
+    check_user(usr_db)
     result = verify_password(refresh_token,usr_db.refresh_token)
     check_valid_refresh_token(result)
     return username
