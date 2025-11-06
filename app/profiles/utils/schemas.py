@@ -7,7 +7,6 @@ class ProfileBase(BaseModel):
 
 
 class ProfileResponse(ProfileBase):
-    model_config = ConfigDict(from_attributes=True)
     user_id: int
     id: int
 

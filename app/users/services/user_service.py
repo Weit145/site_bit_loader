@@ -47,13 +47,13 @@ class UserService(IUserService):
 
     # Auth
     async def refresh_token(self, session: AsyncSession, refresh_token: str) -> Token:
-        username = valid_refresh_token(session,refresh_token)
+        username = await valid_refresh_token(session,refresh_token)
         access_token = create_access_token({"sub": username})
         return Token(access_token=access_token,token_type="bearer")
 
     async def authenticate_user(self, user: UserLogin, session: AsyncSession) -> JSONResponse:
         user_db = await SQLAlchemyUserRepository(session).get_user_by_username(user.username)
-        check_for_auth(user_db,user_db.password)
+        check_for_auth(user_db,user.password)
         response = await build_auth_response(session=session, user_db=user_db)
         return response
 
