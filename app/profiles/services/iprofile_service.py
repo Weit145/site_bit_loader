@@ -14,7 +14,7 @@ class IProfileService(ABC):
         pass
 
     @abstractmethod
-    async def update_profile(self, session: AsyncSession, new_profile: Profile) -> ProfileOut:
+    async def update_profile(self, session: AsyncSession, new_profile: Profile, profile: Profile) -> ProfileOut:
         pass
 
     @abstractmethod

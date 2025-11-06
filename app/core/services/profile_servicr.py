@@ -9,11 +9,12 @@ class SQLAlchemyProfileRepository(IProfileRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def update_profile(self, profile: Profile) -> Profile:
-        updated_profile = await self.session.merge(profile)
+    async def update_profile(self, new_profile:Profile, profile: Profile) -> Profile:
+        profile.name_img = new_profile.name_img
+        profile.img = True
         await self.session.commit()
-        await self.session.refresh(updated_profile)
-        return updated_profile
+        await self.session.refresh(profile)
+        return profile
 
     async def reset_profile(self, profile: Profile) -> Profile:
         profile.name_img = "default.png"

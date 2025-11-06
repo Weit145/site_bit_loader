@@ -22,7 +22,7 @@ from app.core.security.password import (
 )
 from app.core.services.user_service import SQLAlchemyUserRepository
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/auth/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/auth/token/")
 
 async def build_auth_response(session: AsyncSession, user_db: User) -> JSONResponse:
     access_token = create_access_token(data={"sub": user_db.username})

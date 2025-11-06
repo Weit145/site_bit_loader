@@ -6,7 +6,7 @@ from app.core.models import Profile
 class IProfileRepository(ABC):
 
     @abstractmethod
-    async def update_profile(self, profile: Profile) -> Profile:
+    async def update_profile(self, new_profile:Profile, profile: Profile) -> Profile:
         pass
 
     @abstractmethod
