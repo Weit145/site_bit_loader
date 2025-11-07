@@ -1,0 +1,57 @@
+from abc import ABC, abstractmethod
+
+from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.models import User
+from app.users.utils.schemas import (
+    Token,
+    UserLogin,
+    OutUser,
+)
+
+
+class IUserService(ABC):
+
+    # Registration
+    @abstractmethod
+    async def create_user(self,session:AsyncSession, user:User)->None:
+        pass
+
+    @abstractmethod
+    async def registration_confirmation(self, session:AsyncSession,token:str)->JSONResponse:
+        pass
+
+
+    # Auth
+    @abstractmethod
+    async def refresh_token(self,session:AsyncSession,refresh_token:str)->Token:
+        pass
+
+    @abstractmethod
+    async def authenticate_user(self,user:UserLogin,session:AsyncSession)->JSONResponse:
+        pass
+
+
+    # Me
+    @abstractmethod
+    async def delete_me_user(self,current_user:User,session:AsyncSession)->None:
+        pass
+
+    @abstractmethod
+    async def read_me_user(self, current_user:User)->OutUser:
+        pass
+
+
+    # Admin
+    @abstractmethod
+    async def delete_all_users(self, session:AsyncSession)->None:
+        pass
+
+    @abstractmethod
+    async def dellete_all_no_comfirm_users(self, session:AsyncSession)->None:
+        pass
+
+    @abstractmethod
+    async def get_user_by_id(self, user_id: int, session: AsyncSession) -> OutUser:
+        pass

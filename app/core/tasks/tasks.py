@@ -3,8 +3,8 @@ from pathlib import Path
 
 from jinja2 import Template
 
-from app.tasks.celery import app
-from app.tasks.email.email import send_email
+from app.core.tasks.celery import app
+from app.core.tasks.email.email import send_email
 
 
 @app.task(name="send_email")
