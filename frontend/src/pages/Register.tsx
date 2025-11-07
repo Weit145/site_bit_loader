@@ -1,5 +1,3 @@
-import axios from "axios";
-
 import { useState } from "react";
 import "./Pages.css";
 import Button from "../components/button_handler";
@@ -129,6 +127,7 @@ function handleNameChange(v: string) {
           },
         }
       );
+      // if (response.status==401)
     } catch (error: any) {
       console.error("Ошибка при отправке данных:", error.response?.data || error.message);
       const serverMessage = error.response?.data;
@@ -137,7 +136,6 @@ function handleNameChange(v: string) {
       }
     }
       // alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
-    
     }
 
 

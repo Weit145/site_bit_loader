@@ -1,5 +1,5 @@
-<svg width="60" height="30" viewBox="0 0 60 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="60" height="7.14287" rx="3.57143" transform="matrix(1 0 0 -1 0 29.4286)" fill="white"/>
-<rect width="60" height="7.14287" rx="3.57143" transform="matrix(1 0 0 -1 0 18.2858)" fill="white"/>
-<rect width="60" height="7.14287" rx="3.57143" transform="matrix(1 0 0 -1 0 7.14288)" fill="white"/>
+<svg width="60" height="27" viewBox="0 0 60 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="60" height="7" rx="3.5" transform="matrix(1 0 0 -1 0 7)" fill="white"/>
+<rect width="60" height="7" rx="3.5" transform="matrix(1 0 0 -1 0 17)" fill="white"/>
+<rect width="60" height="7" rx="3.5" transform="matrix(1 0 0 -1 0 27)" fill="white"/>
 </svg>

@@ -28,7 +28,7 @@
 
   backdrop-filter: blur(0.5vh);
   align-items: center;
-
+  z-index: auto;
 
 }
 

@@ -1,29 +1,37 @@
-.menu_option{
-
+.menu_option {
   position: absolute;
   width: 60px;
   height: 30px;
   left: 2.5vw;
-  top:35%;
-
+  top: 35%;
+  cursor: pointer;
+  z-index: 1002;
+  
 }
-.menu_option_button{
-
+.menu_option_image {
   position: absolute;
   width: 60px;
   height: 30px;
-  left: 2.5vw;
-  top:-45vh;
-  border-color: #00000000;
-  color: #00000000;
-
+  left: 0vw;
+  top: 0vh;
+  cursor: pointer;
+  z-index: 1002;
+  
+}
+.menu_option:hover .menu_option_image {
+  filter: brightness(1.15) saturate(1.2);
+  transform: translateY(-1px);
+  transition: filter 0.12s ease, transform 0.12s ease;
+}
+.menu_option:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 18px rgba(0,255,179,0.18), 0 0 12px rgba(0,255,179,0.06);
 }
 
-.menu_box{
+.menu_box {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-
   position: absolute;
   width: 95vw;
   height: 10vh;
@@ -31,36 +39,79 @@
   top: 1vh;
   background: rgba(0, 0, 0, 0.001);
   border: 0.5vh solid rgb(0, 255, 179);
-  /* border-style: dashed; */
   border-radius: 2.5vw;
   backdrop-filter: blur(0.5vh);
   align-items: center;
-
+  z-index: 999;
 }
-.menu_text{
-  /* KLoad/Авторизация */
-  
-  position: absolute;
-  width: 50vw;
-  top: calc(50% - 64px/2 + 0.5px);
 
-  font-family: 'Press Start 2P';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 28px;
-  line-height: 32px;
+/* Контейнер меню с автоматическими размерами */
+.option_box {
+  position: fixed;
+  top: 12vh;
+  left: 2vw;
+  min-width: 200px;
+  width: auto;
+  height: auto;
+  max-height: 70vh;
+  overflow-y: auto;
+  
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 15px 10px;
+  gap: 8px; /* Расстояние между элементами */
+  
+  background: rgba(240, 248, 255, 0.95);
+  border-radius: 1.5vw;
+  border: 2px solid rgb(0, 255, 179);
+  backdrop-filter: blur(0.5vh);
+  align-items: stretch;
+  z-index: 1001;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Стили для элементов меню */
+.menu_option_item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  min-height: 45px;
+  padding: 10px 15px;
+  
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
   text-align: center;
-
-  color: #FFFFFF;
-
-
-
+  text-decoration: none;
+  color: #333;
   
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  
+  transition: all 0.3s ease;
 }
+
+.menu_option_item:hover {
+  background: #88C1F6;
+  border-color: rgb(0, 255, 179);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 255, 179, 0.3);
+  text-decoration: none;
+  color: #333;
+}
+
+.menu_option_item:active {
+  transform: translateY(0);
+  transition: all 0.1s ease;
+}
+
 .menu_text_button {
   position: absolute;
   font-family: 'Press Start 2P';
-  top:calc(70% - 64px/2 + 0.5px);
+  top: calc(70% - 64px/2 + 0.5px);
   font-size: 28px;
   line-height: 32px;
   color: #FFFFFF;
@@ -69,9 +120,9 @@
   cursor: pointer;
   padding: 0;
   user-select: none;
+  text-decoration: none;
 }
 
-/* Эффекты при наведении / нажатии */
 .menu_text_button:hover {
   text-shadow: 0 0 8px #0ff;
   transform: scale(1.05);
@@ -82,4 +133,21 @@
 .menu_text_button:active {
   transform: scale(0.97);
   opacity: 0.8;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .option_box {
+    left: 5vw;
+    right: 5vw;
+    min-width: auto;
+    width: auto;
+    max-width: 90vw;
+  }
+  
+  .menu_option_item {
+    font-size: 10px;
+    min-height: 40px;
+    padding: 8px 12px;
+  }
 }

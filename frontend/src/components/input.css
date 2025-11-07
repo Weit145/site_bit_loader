@@ -1,5 +1,6 @@
 
 .input_area{
+  position: relative;
     width: 40vw;
     height: 2vh;
     min-height: 2vw;
@@ -18,6 +19,7 @@
 
     --margin_topAnd_buttom: 1.5vh;
     padding-left: 1vw; 
+    z-index: 1;
 }
 .input_area_incorrect{
     width: 40vw;

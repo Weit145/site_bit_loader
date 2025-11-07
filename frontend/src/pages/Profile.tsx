@@ -10,7 +10,7 @@ export default function Profile (){
             <Header />
             <main>
                 <div className = "form_box">
-                    <h1 className="form_text">Профиль</h1>
+                    <h2 className="form_text">Профиль</h2>
                     <img src="../../public/vite.svg" alt="Default_photo" width={"200px"} height={"200px"}/>
 
                 </div>

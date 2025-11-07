@@ -27,26 +27,6 @@ export default function App() {
           <h1 className="content_text">Тема треда</h1>
           <h2 className="content_text"><span className="content_text_root">root@:~$</span> Здесь скоро будет форум</h2>
           <span>{getAccessToken()}</span>
-          <Link to ="/register">
-              <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
-              Регистрация
-              </Button>
-            </Link>
-            <Link to ="/login">
-              <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
-              Войти
-              </Button>
-            </Link>
-            <Link to ="/confirm">
-              <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
-              Подтвердите регистрацию
-              </Button>
-            </Link>
-            <Link to ="/profile">
-              <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
-               Proфиль
-              </Button>
-            </Link>
         </div>
       </main>
     </div>
