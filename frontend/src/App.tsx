@@ -25,7 +25,7 @@ export default function App() {
       <main>
         <div className="content_box">
           <h1 className="content_text">Тема треда</h1>
-          <h2 className="content_text"><span className="content_text_root">root@:~$</span> Здесь скоро будет форум</h2>
+          <h2 className="content_text"><span className="content_text" style={{color:"red"}}>root@:~$</span> Здесь скоро будет форум</h2>
           <span>{getAccessToken()}</span>
         </div>
       </main>

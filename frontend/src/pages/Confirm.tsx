@@ -15,18 +15,22 @@ export default function Confirm() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+
     const params = new URLSearchParams(location.search);
     const token = params.get("token_pod");
     if (token){
-      setAccessToken(token);
+      // setAccessToken(token);
       (async() =>{
         setLoading(true);
         setError(null);
         try {
           const response = await api.get(
-            "http://127.0.0.1:8000/user/registration/confirm",
-            { params: { token_pod: token } }
-          );
+            "/user/registration/confirm/",{
+          params: { token_pod: token },
+          headers: { Authorization: undefined } // на всякий случай
+        });
+        const newAccess = response.data?.access_token;
+        if (newAccess) setAccessToken(newAccess);
           setAccessToken(response.data?.access_token || null);
           if(getAccessToken()!=null){
             navigate("/");
@@ -41,6 +45,7 @@ export default function Confirm() {
         }
       })();
     }
+    
   }, [location.search, navigate]);  
   
   return (
