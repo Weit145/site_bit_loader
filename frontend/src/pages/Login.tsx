@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../api";
 
 import { useState } from "react";
 import "./Pages.css";
@@ -7,8 +7,14 @@ import "../components/button_handler.css";
 import Header from "../components/Header";
 import Input from '../components/input';
 import { Link } from "react-router";
+import { setAccessToken, refreshOnce} from "../api";
 
 export default function Login() {
+
+
+  const [sendStatus, setSendStatus] = useState<'none'|'success'|'error'>('none');
+  const [serverMessage, setServerMessage] = useState<string>('');
+
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [flag_name_error, setFlag_name_error] = useState<boolean>(false);
@@ -46,6 +52,11 @@ function handleNameChange(v: string) {
     console.log("password:", password);
   }
 
+
+  function Reload_Page(){
+    window.location.reload();
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -67,26 +78,39 @@ function handleNameChange(v: string) {
       return;
     }
 
-    const params = new URLSearchParams({
-      username : name,
-      password : password,
-    })
+    const params = new URLSearchParams();
+    params.append("username", name);
+    params.append("password", password);
+    params.append("grant_type", "password");
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/users/",
-        {
-          username: name,
-          password: password,
-        },
+      const response = await api.post(
+        "/user/auth/token/",
+        params.toString(),
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
           },
         }
       );
+      const newAccess = response.data?.access_token;
+      if (newAccess) setAccessToken(newAccess);
+      // setAccessToken(response.data?.access_token || null);
+    setSendStatus('success');
 
-    } catch (error: any) {
+    }  catch (error: any) {
+      setSendStatus('error');
+      
+
       console.error("Ошибка при отправке данных:", error.response?.data || error.message);
+      const serverMessage = error.response?.data?.details
+      ? Array.isArray(error.response.data.details)
+        ? error.response.data.details.join('\n')
+        : String(error.response.data.details)
+      : error.response?.data?.message || error.message || 'Ошибка при отправке';
+      setServerMessage(serverMessage);
+      if (serverMessage?.details){
+        alert(`Ошибка регистрации:\n${serverMessage.details.join("\n")}`);
+      }
     }
   }
 
@@ -98,7 +122,25 @@ function handleNameChange(v: string) {
       <main>
         <div className="form_box">
           <h1 className="form_text">Авторизация</h1>
-
+          {sendStatus!='none' && <div className="info_box">
+            {sendStatus === 'success' && (
+            <div>
+              <h5 className="form_text" >Вы вошли в аккаунт <span style={{color:"green"}}>{name}</span></h5>
+                <Link to ="/">
+                <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
+                На главную
+                </Button>
+                </Link>
+            </div>
+            )}
+            {sendStatus === 'error' && (<div>
+              <h5 className="form_text" style={{color:"red"}}>{serverMessage}</h5>
+                <Button onClick={() => Reload_Page()} type={"button"} flag_disabled={false}>
+                Заново
+                </Button>
+                </div>
+            )}
+          </div>}
           <form onSubmit={handleSubmit} noValidate className="form_button_box">
 
             <Input

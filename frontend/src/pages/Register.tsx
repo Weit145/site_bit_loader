@@ -9,6 +9,11 @@ import { Link} from "react-router";
 
 
 export default function Register() {
+
+  const [sendStatus, setSendStatus] = useState<'none'|'success'|'error'>('none');
+  const [serverMessage, setServerMessage] = useState<string>('');
+
+
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -77,6 +82,9 @@ function handleNameChange(v: string) {
     console.log("name:", name);
     console.log("password:", password);
   }
+  function Reload_Page(){
+    window.location.reload();
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -98,6 +106,8 @@ function handleNameChange(v: string) {
 
     if (nameInvalid || emailInvalid || passwordInvalid || passwordConfirmInvalid) {
       // не отправляем форму — ошибки показаны пользователю
+      setSendStatus('error');
+      setServerMessage('Проверьте поля формы — есть ошибки.');
       console.log("Validation failed, not sending. Flags:", {
         nameInvalid,
         emailInvalid,
@@ -114,29 +124,23 @@ function handleNameChange(v: string) {
       email:email,
     })
     try {
-      const response = await api.post(
-        "/user/registration/",
-        {
-          username : name,
-          password : password,
-          email:email,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // if (response.status==401)
-    } catch (error: any) {
-      console.error("Ошибка при отправке данных:", error.response?.data || error.message);
-      const serverMessage = error.response?.data;
-      if (serverMessage?.details){
-        alert(`Ошибка регистрации:\n${serverMessage.details.join("\n")}`);
-      }
-    }
-      // alert(`Отправлено:\nEmail: ${name}\nPassword: ${password}`);
-    }
+    const response = await api.post(
+      "/user/registration/",
+      { username: name, password, email },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    setSendStatus('success');
+  } catch (error: any) {
+    setSendStatus('error');
+    const serverMessage = error.response?.data?.details
+      ? Array.isArray(error.response.data.details)
+        ? error.response.data.details.join('\n')
+        : String(error.response.data.details)
+      : error.response?.data?.message || error.message || 'Ошибка при отправке';
+    setServerMessage(serverMessage);
+    console.error("Ошибка при отправке данных:", error.response?.data || error.message);
+  }
+  }
 
 
   return (
@@ -147,6 +151,25 @@ function handleNameChange(v: string) {
       <main>
         <div className="form_box">
           <h1 className="form_text">Регистрация</h1>
+          {sendStatus!='none' && <div className="info_box">
+            {sendStatus === 'success' && (
+            <div>
+              <h5 className="form_text" >На вашу почту <span style={{color:"green"}}>{email}</span> было отправлено письмо для поддтверждения</h5>
+                <Link to ="/">
+                <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
+                На главную
+                </Button>
+                </Link>
+            </div>
+            )}
+            {sendStatus === 'error' && (<div>
+              <h5 className="form_text" style={{color:"red"}}>{serverMessage}</h5>
+                <Button onClick={() => Reload_Page()} type={"button"} flag_disabled={false}>
+                Заново
+                </Button>
+                </div>
+            )}
+          </div>}
 
           <form onSubmit={handleSubmit} noValidate className="form_button_box">
 
@@ -206,3 +229,4 @@ function handleNameChange(v: string) {
   );
 
 }
+

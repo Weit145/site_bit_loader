@@ -10,30 +10,38 @@ export function setAccessToken(token: string | null) { accessToken = token; }
 export function getAccessToken() { return accessToken; }
 
 api.interceptors.request.use((config) => {
-    if (accessToken) {
+    if (config.url !== "/user/auth/refresh" && accessToken) {
         config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    
     return config;
 });
 
 let isRefreshing = false;
 let refreshPromise: Promise<any> | null = null;
 export async function refreshOnce(){
-    if(isRefreshing)return refreshPromise;
+    console.log("Refreshing token...");
+    if(isRefreshing) return refreshPromise;
     isRefreshing = true;
-    refreshPromise = api.post("/auth/refresh")
-    .then(res =>{
-        const newAccess=res.data?.access_token;
-        if(newAccess)setAccessToken(newAccess);
+    refreshPromise = api.get("/user/auth/refresh/" , { withCredentials: true })
+    .then(res => {
+        console.log("Refresh response:", res.data);
+        const newAccess = res.data?.access_token;
+        if (newAccess) setAccessToken(newAccess);
         return newAccess;
     })
-    .finally(()=>{
+    .catch(err => {
+        console.error("Refresh error:", err.response?.status, err.response?.data);
+        throw err;
+    })
+    .finally(() => {
         isRefreshing = false;
         refreshPromise = null;
     });
     return refreshPromise;
 }
+
 
 api.interceptors.response.use(
     res=>res,

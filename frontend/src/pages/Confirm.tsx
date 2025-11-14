@@ -27,11 +27,13 @@ export default function Confirm() {
           const response = await api.get(
             "/user/registration/confirm/",{
           params: { token_pod: token },
-          headers: { Authorization: undefined } // на всякий случай
+          // headers: { Authorization: undefined } // на всякий случай
         });
+
+        
         const newAccess = response.data?.access_token;
         if (newAccess) setAccessToken(newAccess);
-          setAccessToken(response.data?.access_token || null);
+          // setAccessToken(response.data?.access_token || null);
           if(getAccessToken()!=null){
             navigate("/");
             return;

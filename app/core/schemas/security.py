@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 
-
 class Cookies(BaseModel):
-    key:str
-    value:str
-    httponly:bool = False
-    secure: bool = True
-    samesite:str = "strict"
-    max_age :int = 7*24*3600
+    key: str
+    value: str
+    httponly: bool = True        # безопаснее
+    secure: bool = True         # локально HTTP
+    samesite: str = "none"        # работает на всех страницах
+    max_age: int = 7*24*3600     # 7 дней
+    path: str = "/"  
+
 
 
 # response.set_cookie(

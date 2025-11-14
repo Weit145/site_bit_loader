@@ -62,19 +62,7 @@
 
 }
 
-.form_text{
-  /* position: absolute; */
-  width: 50vw;
-  top: 2.5vh;
 
-  font-family: 'Press Start 2P';
-  font-style: normal;
-  font-size: calc((5vh+5vw)/2);
-  /* identical to box height */
-  text-align: center;
-
-  color: #000000;
-}
 
 .form_button_box{
 
@@ -96,3 +84,44 @@
     /* position: static; */
     /* margin-right: 10vw; */
 }
+/* Общая правка для корректного центрирования текста */
+.form_text{
+  /* убираем фиксированную ширину и top */
+  width: 100%;
+  max-width: 60ch; /* ограничение на ширину строки для удобочитаемости */
+  margin: 2.5vh auto 0; /* центрируем блок внутри родителя */
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-size: calc((3.5vh + 3.5vw) / 2);
+  text-align: center;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+/* Подправим контейнер сообщения */
+.info_box {
+  position: fixed;
+  min-width: 200px;
+  top: 5vh;
+  width: 70vw;
+  height: 70vh;
+  max-height: 70vh;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* текст сверху, но по центру по горизонтали */
+  align-items: center;          /* центрируем по горизонтали */
+  box-sizing: border-box;
+  padding: 15px 20px;
+  gap: 8px;
+
+  background: rgba(240, 248, 255, 0.95);
+  border-radius: 1.5vw;
+  backdrop-filter: blur(0.5vh);
+  z-index: 1001;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  text-align: center; /* на всякий случай для inline-элементов */
+}
+

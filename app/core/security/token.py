@@ -69,7 +69,6 @@ async def valid_refresh_token(session: AsyncSession,refresh_token:str):
     return username
 
 
-
 async def decode_jwt_username(
     token: Annotated[str, Depends(oauth2_scheme)],
 ):
