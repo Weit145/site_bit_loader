@@ -1,8 +1,16 @@
 #root {
-  max-width: 1280px;
+  
+  
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding-left: 2.5vw;   /* опционально: симулирует боковые отступы */
+  padding-right: 2.5vw;
+  display: flex;
+  flex-direction:column;
+  box-sizing: border-box;
+  align-items: center;
+
+
+
 }
 
 
@@ -11,46 +19,41 @@
   flex-direction:column;
   box-sizing: border-box;
 
-  position: absolute;
   width: 95vw;
-  height: 82.5vh;
-  left: 2.5vw;
-  top: 15vh;
+  min-height: 82.5vh;
+  margin: 15vh auto 5vh auto; /* ← центр по горизонали (auto) */
+  padding: 2.5vh 3vw 3vh 3vw; /* внутренние отступы, снизу место для “пустоты” */
+  gap:2.5vh;
   background:rgb(0, 0, 0,0.90);
   border-radius: 2.5vw;
-  /* filter: drop-shadow(0 0 8px rgb(0, 0, 0)); */
   box-shadow:
-      /* 0 0 30px 10px rgba(0, 0, 0, 1), */
-      0 0 45px 15px #000000;
+      0 0 1.5vw 1.5vh #000000;
   ;
-  /* border: 5vh solid #000000; */
-
-
   backdrop-filter: blur(0.5vh);
   align-items: center;
   z-index: auto;
 
 }
 
+.lable_text{
+  font-size: 32px;
+}
 .content_text{
-  /* position: absolute; */
-  width: 50vw;
-  top: 2.5vh;
-
+  width: 100%;
   font-family: 'Press Start 2P';
   font-style: normal;
-  font-size: calc((5vh+5vw)/2);
-  /* identical to box height */
-  text-align: center;
+  font-size: 24px;
+  text-align: left;
+  background-color: #ffffff0c;
+  padding: 0.5vh 0.5vw 0.5vh 0.5vw;
+  border-radius: 0.5vw;
+
+  border: rgb(0, 255, 179);
+  border-style:dashed;
+  overflow-wrap: anywhere;
 
   color: #ffffff;
 }
-.content_text_root{
-  /* color: rgb(0, 255, 179); */
-  color: darkred;
-
-}
-
 .button_box{
 
   display: flex;
@@ -59,15 +62,11 @@
   margin-top:1.5vh;
 
 }
-.form_area{
-    display: flex;
-    flex-direction: column;
-    width: var(--form-width);
-    max-width: var(--form-max-width);
-    gap: var(--row-gap);
-    box-sizing: border-box;
-    align-items: stretch;
-    margin-top: 1vh;
-    /* position: static; */
-    /* margin-right: 10vw; */
+
+.image{
+  width: 50px;
+  height: 50px;
+  border: rgb(0, 255, 179);
+  border-style:groove;
+  border-radius: 5px;
 }

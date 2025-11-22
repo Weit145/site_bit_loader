@@ -2,11 +2,8 @@
 
 import  { useState, useEffect } from "react";
 import "./App.css";
-import Button from "./components/button_handler";
 import "./components/button_handler.css";
 import Header from "./components/Header";
-import { Link } from "react-router";
-import api from "./api";
 import { getAccessToken, refreshOnce } from "./api";
 
 
@@ -14,12 +11,10 @@ export default function App() {
   const [access, setAccess] = useState<string | null>(() => getAccessToken());
 
   useEffect(() => {
-    // Вызываем один раз при монтировании — получим access через refresh token (куки)
     let mounted = true;
     refreshOnce()
       .then((newAccess: any) => {
         if (!mounted) return;
-        // refreshOnce в вашем api возвращает промис, который резолвится в newAccess (или undefined)
         setAccess(newAccess ?? getAccessToken());
       })
       .catch(() => {
@@ -28,23 +23,35 @@ export default function App() {
     return () => { mounted = false; };
   }, []);
 
-  function Button_click(type: string) {
-    console.log("Button clicked", type);
-  }
+  const content = [
+    {title:"Aaaa", body:"asdaadasd", name_img:"default.png", user_name: "weit", id:0},
+    {title:"Bbbbbb", body:"oajsdasdakmda", name_img:"default.png", user_name: "fugi", id:1},
+    {title:"CCcc", body:"pasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopaincapasikdopainca", name_img:"default.png", user_name: "coloss", id:2},
+    {title:"DDDDdddd", body:"qwhbdzxnzmlcdm", name_img:"default.png", user_name: "mifugi", id:3},
+    {title:"EEeeeee", body:"Wdjznxjc z q", name_img:"default.png", user_name: "fkxcmzxugi", id:4},
+    {title:"Ffffff", body:"ffAsjimcacicnoqc", name_img:"default.png", user_name: "lol", id:5}
+  ];
 
-  
   return (
     <div>
 
       <Header />
 
-      <main>
-        <div className="content_box">
-          <h1 className="content_text">Тема треда</h1>
-          <h2 className="content_text"><span className="content_text" style={{color:"red"}}>root@:~$</span> Здесь скоро будет форум</h2>
+      <main className="content_box">
+         {/* <img className="image" src={"../public/default.png"}/> */}
+
+          {content.map((option, index) => (
+            <div className="content_text" key={index}>
+              <div className="lable_text" >{option.title}</div>
+              <span><img className="image" src="../public/default.png"/></span>
+              <span style={{color:"red"}}>  {option.user_name + "@kload: " }</span>
+              {option.body}
+            </div>
+          ))}
           <span>{access}</span>
-        </div>
       </main>
+
+
     </div>
   );
 

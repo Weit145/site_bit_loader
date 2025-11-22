@@ -42,27 +42,38 @@
 }
 
 
+
+
 .form_box{
   display: flex;
   flex-direction:column;
   box-sizing: border-box;
 
-  position: absolute;
   width: 95vw;
-  height: 82.5vh;
-  left: 2.5vw;
-  top: 15vh;
-  background: rgba(240, 248, 255, 0.95);
+  min-height: 82.5vh;
+  margin: 15vh auto 5vh auto; /* ← центр по горизонали (auto) */
+  padding: 2.5vh 3vw 3vh 3vw; /* внутренние отступы, снизу место для “пустоты” */
+  gap:2.5vh;
+  background:rgb(0, 0, 0,0.90);
   border-radius: 2.5vw;
-  /* border: 5vh solid #000000; */
-
+  box-shadow:
+      0 0 1.5vw 1.5vh #000000;
+  ;
   backdrop-filter: blur(0.5vh);
   align-items: center;
   z-index: auto;
 
 }
 
+/* .content_text{
+  width: 85%;
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-size: 24px;
+  text-align: left;
 
+  color: #ffffff;
+} */
 
 .form_button_box{
 
