@@ -54,10 +54,10 @@
   margin: 15vh auto 5vh auto; /* ← центр по горизонали (auto) */
   padding: 2.5vh 3vw 3vh 3vw; /* внутренние отступы, снизу место для “пустоты” */
   gap:2.5vh;
-  background:rgb(0, 0, 0,0.90);
+  background:rgba(255, 255, 255, 0.9);
   border-radius: 2.5vw;
   box-shadow:
-      0 0 1.5vw 1.5vh #000000;
+      0 0 1vw 1vh #ffffff;
   ;
   backdrop-filter: blur(0.5vh);
   align-items: center;
