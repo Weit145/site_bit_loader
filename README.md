@@ -6,7 +6,7 @@ Monolithic Web Application 🏗️
 
 Backend на Python 🐍 с использованием FastAPI ⚡ и Uvicorn 🚀
 
-Frontend на Node.js/ Vite 💻✨
+Frontend на Node.js/ Vite/ React / Typescript / Javascript 💻✨
 
 Celery для фоновых задач 🔄
 
