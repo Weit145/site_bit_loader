@@ -37,7 +37,7 @@ export default function Register() {
   const validatePassword = (v: string) => v.length >= 6; // минимум 6 символов
   const validatePasswordConfirm = (v: string, pass: string) => v === pass && v.length > 0;
 
-function handleNameChange(v: string) {
+  function handleNameChange(v: string) {
     setName(v);
     if (touchedName) setFlag_name_error(!validateName(v));
   }
@@ -212,11 +212,9 @@ function handleNameChange(v: string) {
               touched={touchedPasswordConfirm}
               errorMessage="Пароли не совпадают"
             >Подтвердите пароль</Input>
-            {/* <Link to = "/"> */}
-              <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_email_error || flag_name_error || flag_password_confirm_error || flag_password_error}>
+              <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_email_error || flag_name_error || flag_password_confirm_error || flag_password_error || (email.length==0) || (name.length==0)||(password.length==0) || (password_confirm.length==0)}>
                 Подтвердить
               </Button>
-            {/* </Link> */}
             <Link to ="/login">
               <Button onClick={() => Button_click("b")} type={"button"} flag_disabled={false}>
               Войти

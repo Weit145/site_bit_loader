@@ -42,6 +42,38 @@ export async function refreshOnce(){
     return refreshPromise;
 }
 
+export async function getPosts(){
+    let response: Promise<any> | null = null;
+    console.log("Getting posts...");
+    response = await api.get("/post/",{ headers: { "Content-Type": "application/json"}, withCredentials: true })
+        .then(res => {
+            console.log("Get posts response:", res.data);
+            return res.data;
+        })
+        .catch(err => {
+            console.error("Get posts error:", err.response?.status, err.response?.data);
+            throw err;
+        });
+        return response;
+    
+}
+
+export async function getUserPosts(){
+    let response_mes: Promise<any> | null = null;
+    console.log("Getting user posts...");
+    response_mes = await api.get("/post/",{ headers: { "Content-Type": "application/json"}, withCredentials: true })
+        .then(res => {
+            console.log("Get posts response_mes:", res.data);
+            return res.data;
+        })
+        .catch(err => {
+            console.error("Get posts error:", err.response?.status, err.response?.data);
+            throw err;
+        });
+        return response_mes;
+    
+}
+
 
 api.interceptors.response.use(
     res=>res,

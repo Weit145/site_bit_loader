@@ -52,7 +52,7 @@
 
   font-family: 'Press Start 2P';
   font-style: normal;
-  font-size: calc(100vh+100px);
+  font-size: 20px;
 
   /* identical to box height */
   text-align:center;

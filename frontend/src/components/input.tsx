@@ -2,8 +2,8 @@
 import './input.css'
 import '../App.css'
 
-export default function Input({children, type, flag_error, setValue, value, onBlur, touched = false, errorMessage=""}: {children:string, type:string, flag_error:boolean, setValue:(any), value:string, onBlur?:()=>void, touched?:boolean, errorMessage?:string}){
-    function handleChange(event:any){
+export default function Input({children, type, flag_error, setValue, value, onBlur, touched = false, errorMessage=""}: {children:React.ReactNode, type:string, flag_error:boolean, setValue:(value:string) => void, value: string, onBlur?:()=>void, touched?:boolean, errorMessage?:string}){
+    function handleChange(event: React.ChangeEvent<HTMLInputElement>){
         setValue(event.target.value)
     }
     function handleBlur() {

@@ -163,7 +163,7 @@ function handleNameChange(v: string) {
               errorMessage="Пароль должен содержать не менее 6 символов"
             >Пароль</Input>
 
-            <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_name_error || flag_password_error}>
+            <Button onClick={() => Button_click("b")} type={"submit"} flag_disabled={flag_name_error || flag_password_error || (name.length==0)|| (password.length==0)}>
               Подтвердить
             </Button>
             <Link to="/register">

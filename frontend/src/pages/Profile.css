@@ -1,0 +1,152 @@
+.profile_set{
+    gap:2.5vh;
+    overflow-wrap: anywhere;
+}
+.image_profile{
+    
+    
+    width: 200px;
+    height: 200px;
+
+    border-radius: 10px;
+    border: rgb(0, 255, 179);
+
+    border-style:groove;
+    border-width: 5px;
+}
+
+.profile_lable_text{
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    /* font-size: calc((2.5vh + 2.5vw) / 2); */
+    font-size: 30px;
+
+    text-align: center;
+    /* color: #000000; */
+    color: #ffffff;
+    box-sizing: border-box;
+
+}
+
+.profile_text{
+    
+    /* position: absolute;
+    left: 5vw;
+    top: 35vh; */
+    font-family: 'Press Start 2P';
+    font-style: normal;
+    /* font-size: calc((2.5vh + 2.5vw) / 2); */
+    font-size: 24px;
+
+    text-align: left;
+    /* color: #000000; */
+    color: #ffffff;
+
+    box-sizing: border-box;
+}
+
+.profile_info{
+    position: absolute;
+    left: 5vw;
+    top: 12.5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    box-sizing: border-box;
+
+    gap:2.5vh;
+}
+.profile_content_align{
+    display: flex;
+    flex-direction:row;
+    box-sizing: border-box;
+}
+.profile_messages{
+    position: relative;
+    left: 7.5vw;
+    top: 2.5vh;
+    width: 50vw;
+    min-height: 60vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    margin: 0 auto 5vh auto;
+    padding: 2.5vh 3vw 3vh 3vw;
+    border-radius: 2.5vh;
+}
+.column_profile_info{
+    display: flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    position: relative;
+    /* left: 2.5vw; */
+    /* left: 0;
+    top: 2.5vh; */
+    width: 40vw;
+    height: 100%;
+    min-height: 60vh;
+    /* background-color: rgb(0, 0, 0); */
+    /* background-color: rgba(0, 0, 0, 0.75); */
+    background-color: rgba(0, 0, 0, 0);
+    /* border: calc((0.5vh + 0.5vw) / 2) dashed rgb(0, 255, 179); */
+    border-radius: calc((2.5vh + 2.5vw) / 2);
+    padding: 2.5vh 3vw 3vh 3vw;
+}
+.column_user_posts{
+    display: flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    position: relative;
+    /* left: 2.5vw; */
+    /* left: 0;
+    top: 2.5vh; */
+    width: 100%;
+    min-height: 60vh;
+    height: 100%;
+    /* background-color: rgb(0, 0, 0); */
+    /* border-radius: calc((2.5vh + 2.5vw) / 2); */
+
+    gap:2.5vh;
+    padding: 2.5vh 3vw 3vh 3vw;
+}
+.column_space{
+    display: flex;
+    flex-direction:column;
+    box-sizing: border-box;
+    position: relative;
+    width: 2.5vw;
+    height: 100%;
+    min-height: 60vh;
+    background-color: rgba(47, 0, 255, 0);
+}
+.test_row{
+    display: flex;
+    flex-direction:row;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    min-height: 60vh;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0 auto 5vh auto;
+}
+.posts_user_box{
+
+}
+.posts_user_text{
+
+}
+
+/* @media (orientation: landscape){
+    .profile_info{
+        left: 5vw;
+        top: 12.5vh;
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+    }
+    .profile_text{
+        max-width: 35vw;
+    }
+}
+@media (orientation: portrait){
+
+} */

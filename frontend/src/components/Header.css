@@ -1,17 +1,20 @@
 .menu_option {
   position: absolute;
-  width: 60px;
-  height: 30px;
+  border-color: rgba(0, 0, 0, 0);
+  
+  width: calc((5vh + 5vw) / 2);
+  height: calc((2.5vh + 2.5vw) / 2);
   left: 2.5vw;
-  top: 35%;
+  top: calc((4vh + 4vw) / 4);
   cursor: pointer;
   z-index: 1002;
+  background-color: rgba(0, 0, 0, 0);
   
 }
 .menu_option_image {
   position: absolute;
-  width: 60px;
-  height: 30px;
+  width: calc((5vh + 5vw) / 2);
+  height: calc((2.5vh + 2.5vw) / 2);
   left: 0vw;
   top: 0vh;
   cursor: pointer;
@@ -34,13 +37,13 @@
   box-sizing: border-box;
   position: absolute;
   width: 95vw;
-  height: 10vh;
+  height: calc((7.5vh + 7.5vw) / 2);
   left: 2.5vw;
-  top: 1vh;
+  top: calc((1vh + 1vw) / 2);
   background: rgba(0, 0, 0, 0.001);
-  border: 0.5vh solid rgb(0, 255, 179);
-  border-radius: 2.5vw;
-  backdrop-filter: blur(0.5vh);
+  border: calc((0.5vh + 0.5vw) / 2) solid rgb(0, 255, 179);
+  border-radius: calc((2.5vh + 2.5vw) / 2);
+  backdrop-filter: blur(calc((0.5vh + 0.5vw) / 2));
   align-items: center;
   z-index: 999;
 }
@@ -50,7 +53,6 @@
   position: fixed;
   top: 12vh;
   left: 2vw;
-  min-width: 200px;
   width: auto;
   height: auto;
   max-height: 70vh;
@@ -79,6 +81,7 @@
   width: 80%;
   min-height: 45px;
   padding: 10px 15px;
+  top: calc((4vh + 4vw) / 4);
   
   font-family: 'Press Start 2P', monospace;
   font-size: 12px;

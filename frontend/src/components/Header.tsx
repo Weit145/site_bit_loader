@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 
 export default function Header(){
-    const [button_flag, setButton_flag] = useState <Boolean>(false);
+    const [button_flag, setButton_flag] = useState <boolean>(false);
 
     function Button_click(){
         if(!button_flag)setButton_flag(true);
@@ -27,7 +27,6 @@ export default function Header(){
                 {/* <input type="image" className='menu_option' src = {button_flag? menu_option_active : menu_option} alt={button_flag? 'menu_option_active' : 'menu option'} onClick={()=>Button_click()}/> */}
                 <button type="button" onClick = {()=>Button_click()} className='menu_option'>
                     <img src = {button_flag? menu_option_active : menu_option} alt={button_flag? 'menu_option_active' : 'menu option'} className='menu_option_image'/>
-
                 </button>
 
                 {button_flag && (

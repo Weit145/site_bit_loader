@@ -2,8 +2,8 @@
   
   
   margin: 0 auto;
-  padding-left: 2.5vw;   /* опционально: симулирует боковые отступы */
-  padding-right: 2.5vw;
+  padding-left: calc((2.5vh + 2.5vw) / 2);   /* опционально: симулирует боковые отступы */
+  padding-right: calc((2.5vh + 2.5vw) / 2);
   display: flex;
   flex-direction:column;
   box-sizing: border-box;
@@ -19,15 +19,15 @@
   flex-direction:column;
   box-sizing: border-box;
 
-  width: 95vw;
+  /* width: 95vw; */
   min-height: 82.5vh;
-  margin: 15vh auto 5vh auto; /* ← центр по горизонали (auto) */
+  margin: calc((10vh + 10vw) / 2) auto 5vh auto; /* ← центр по горизонали (auto) */
   padding: 2.5vh 3vw 3vh 3vw; /* внутренние отступы, снизу место для “пустоты” */
-  gap:2.5vh;
+  gap:calc((2.5vh + 2.5vw) / 2);
   background:rgb(0, 0, 0,0.90);
   border-radius: 2.5vw;
   box-shadow:
-      0 0 1.5vw 1.5vh #000000;
+      0 0 calc((1.5vh + 1.5vw) / 2) calc((1.5vh + 1.5vw) / 2) #000000;
   ;
   backdrop-filter: blur(0.5vh);
   align-items: center;
@@ -36,13 +36,17 @@
 }
 
 .lable_text{
-  font-size: 32px;
+  /* font-size: 28px; */
+  font-size: calc((1.5vh + 1.5vw) / 2);
+
 }
 .content_text{
   width: 100%;
   font-family: 'Press Start 2P';
   font-style: normal;
-  font-size: 24px;
+  /* font-size: 24px; */
+  font-size: calc((1.5vh + 1.5vw) / 2);
+
   text-align: left;
   background-color: #ffffff0c;
   padding: 0.5vh 0.5vw 0.5vh 0.5vw;
@@ -64,9 +68,18 @@
 }
 
 .image{
-  width: 50px;
-  height: 50px;
+  width: calc((5vh + 5vw) / 2);
+  height: calc((5vh + 5vw) / 2);
   border: rgb(0, 255, 179);
   border-style:groove;
   border-radius: 5px;
+}
+
+@media (orientation: landscape){
+  .content_box{
+    width: 95vw;
+  }
+}
+@media (orientation: portrait){
+
 }

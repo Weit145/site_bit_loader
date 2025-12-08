@@ -1,0 +1,23 @@
+.post_button{
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc((10vh + 10vw) / 2);
+    height: calc((10vh + 10vw) / 2);
+    right: 2.5vw;
+    bottom: 2.5vh;
+    border-radius: calc((5vh + 5vw) / 2);
+    z-index: 1002;
+}
+.post_image_button{
+    width: calc((10vh + 10vw) / 2);
+    height: calc((10vh + 10vw) / 2);
+    border-radius: calc((5vh + 5vw) / 2);
+    z-index: 1003;
+    cursor: pointer;
+}
+.post_button:focus,
+.post_button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}

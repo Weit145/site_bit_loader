@@ -103,7 +103,9 @@
   margin: 2.5vh auto 0; /* центрируем блок внутри родителя */
   font-family: 'Press Start 2P';
   font-style: normal;
-  font-size: calc((3.5vh + 3.5vw) / 2);
+  /* font-size: calc((2.5vh + 2.5vw) / 2); */
+  font-size: 38px;
+
   text-align: center;
   color: #000000;
   box-sizing: border-box;
