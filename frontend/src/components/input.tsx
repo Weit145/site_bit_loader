@@ -1,8 +1,22 @@
 // import { useState } from "react"
 import './input.css'
 import '../App.css'
+import type { CSSProperties, ReactNode } from 'react';
 
-export default function Input({children, type, flag_error, setValue, value, onBlur, touched = false, errorMessage=""}: {children:React.ReactNode, type:string, flag_error:boolean, setValue:(value:string) => void, value: string, onBlur?:()=>void, touched?:boolean, errorMessage?:string}){
+type InputProps={
+    className?:string
+    children: ReactNode
+    flag_error?: boolean
+    type:string
+    setValue: (value:string)=>void
+    value: string
+    onBlur?:()=>void
+    touched?:boolean
+    errorMessage?:string
+    style?: CSSProperties
+}
+
+export default function Input({style, children, type, flag_error, setValue, value, onBlur, touched = false, errorMessage=""}: InputProps){
     function handleChange(event: React.ChangeEvent<HTMLInputElement>){
         setValue(event.target.value)
     }
@@ -17,7 +31,7 @@ export default function Input({children, type, flag_error, setValue, value, onBl
                     <span className='input_text'>{children}</span>
                 </div>
                 <div>
-                    <input type={type} value={value} onChange={handleChange} onBlur={handleBlur} className={flag_error==true ? "input_area_incorrect" : "input_area" }/>
+                    <input style={style} type={type} value={value} onChange={handleChange} onBlur={handleBlur} className={flag_error==true ? "input_area_incorrect" : "input_area" }/>
                     {touched && flag_error && <div className="error_message">{errorMessage}</div>}
                 </div>
             </label>

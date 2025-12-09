@@ -1,10 +1,25 @@
 import './button_handler.css'
-// import { useState, useEffect} from 'react'
-export default function Button ({children , onClick, type, flag_disabled}: { children : string, onClick: ()=>void , type:any,  flag_disabled:boolean}){
-    return(
-        <button className="Button" onClick={onClick} type={type} disabled={flag_disabled} >
+import type { ReactNode, MouseEvent, CSSProperties } from 'react'
+
+type ButtonProps = {
+    className?: string
+    children: ReactNode
+    onClick?: (e: MouseEvent<HTMLButtonElement>) => void
+    type?: 'button' | 'submit' | 'reset'
+    flag_disabled?: boolean
+    style?: CSSProperties
+}
+
+export default function Button({ className, children, onClick, type = 'button', flag_disabled = false, style }: ButtonProps) {
+    return (
+        <button
+            className={className ?? 'Button'}
+            onClick={onClick}
+            type={type}
+            disabled={flag_disabled}
+            style={style}
+        >
             {children}
         </button>
     )
-
 }

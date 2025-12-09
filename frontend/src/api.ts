@@ -61,6 +61,7 @@ export async function getPosts(){
 export async function getUserPosts(){
     let response_mes: Promise<any> | null = null;
     console.log("Getting user posts...");
+    //переделать путь на нуджный
     response_mes = await api.get("/post/",{ headers: { "Content-Type": "application/json"}, withCredentials: true })
         .then(res => {
             console.log("Get posts response_mes:", res.data);
